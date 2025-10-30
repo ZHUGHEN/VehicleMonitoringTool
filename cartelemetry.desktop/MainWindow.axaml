@@ -1,0 +1,174 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:CarTelemetry.Desktop"
+        x:Class="CarTelemetry.Desktop.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Width="1024" Height="600" 
+        MinWidth="600" MinHeight="400"
+        Title="Z33 Telemetry Dashboard"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False">
+        <!--ExtendClientAreaToDecorationsHint-->
+        <!--SystemDecorations="None"-->
+
+  <!-- Main Layout -->
+  <Grid RowDefinitions="Auto,*,Auto">
+    
+    <!-- Header -->
+    <Border Grid.Row="0" 
+            Background="#5c5c5c"
+            Padding="20,16">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock Text="🚗" FontSize="24" Margin="0,0,12,0" />
+          <TextBlock Text="Z33 Telemetry Dashboard" 
+                     FontSize="20" 
+                     FontWeight="SemiBold"
+                     Foreground="White" 
+                     VerticalAlignment="Center" />
+        </StackPanel>
+        
+        <!-- Connection Status -->
+        <Border Grid.Column="1" 
+                Background="Green"
+                CornerRadius="12" 
+                Padding="12,6">
+          <TextBlock Text="Connected" 
+                     Foreground="White" 
+                     FontSize="12" 
+                     FontWeight="Medium" />
+        </Border>
+      </Grid>
+    </Border>
+
+    <!-- Main Content Area -->
+    <ScrollViewer Grid.Row="1" Padding="20">
+      <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,*,*">
+        
+        <!-- Title Section -->
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="3"
+                   Text="Live Vehicle Data"
+                   FontSize="24"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,20"
+                   HorizontalAlignment="Center" />
+
+        <!-- RPM Card -->
+        <Border Grid.Row="1" Grid.Column="0" 
+                Background="White"
+                BorderBrush="#E5E7EB"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Margin="8">
+          
+          <StackPanel>
+            <TextBlock Text="⚡" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,12" />
+            
+            <TextBlock Text="{Binding Rpm, StringFormat={}{0:N0}}" 
+                       FontSize="32"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Foreground="#FF6B35" />
+            <TextBlock Text="RPM" 
+                       FontSize="14"
+                       HorizontalAlignment="Center"
+                       Foreground="#6B7280"
+                       Margin="0,8,0,0" />
+            
+            <!-- RPM Progress Bar -->
+            <ProgressBar Value="{Binding Rpm}" 
+                         Maximum="8000" 
+                         Margin="0,12,0,0"
+                         Height="6"
+                         Foreground="#FF6B35" />
+          </StackPanel>
+        </Border>
+
+        <!-- Speed Card -->
+        <Border Grid.Row="1" Grid.Column="1" 
+                Background="White"
+                BorderBrush="#E5E7EB"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Margin="8">
+          
+          <StackPanel>
+            <TextBlock Text="🏎️" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,12" />
+            
+            <TextBlock Text="{Binding SpeedMph, StringFormat={}{0:F1}}" 
+                       FontSize="32"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Foreground="#2E86AB" />
+            <TextBlock Text="MPH" 
+                       FontSize="14"
+                       HorizontalAlignment="Center"
+                       Foreground="#6B7280"
+                       Margin="0,8,0,0" />
+            
+            <!-- Speed Progress Bar -->
+            <ProgressBar Value="{Binding SpeedMph}" 
+                         Maximum="150" 
+                         Margin="0,12,0,0"
+                         Height="6"
+                         Foreground="#2E86AB" />
+          </StackPanel>
+        </Border>
+
+        <!-- Coolant Temperature Card -->
+        <Border Grid.Row="1" Grid.Column="2" 
+                Background="White"
+                BorderBrush="#E5E7EB"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Margin="8">
+          
+          <StackPanel>
+            <TextBlock Text="🌡️" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,12" />
+            
+            <TextBlock Text="{Binding CoolantC, StringFormat={}{0:F0}}" 
+                       FontSize="32"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Foreground="#A23B72" />
+            <TextBlock Text="°C" 
+                       FontSize="14"
+                       HorizontalAlignment="Center"
+                       Foreground="#6B7280"
+                       Margin="0,8,0,0" />
+            
+            <!-- Temperature Progress Bar -->
+            <ProgressBar Value="{Binding CoolantC}" 
+                         Maximum="120" 
+                         Margin="0,12,0,0"
+                         Height="6"
+                         Foreground="#A23B72" />
+          </StackPanel>
+        </Border>
+      </Grid>
+    </ScrollViewer>
+
+    <!-- Footer/Status Bar -->
+    <Border Grid.Row="2" 
+            Background="#F9FAFB"
+            BorderBrush="#E5E7EB"
+            BorderThickness="0,1,0,0"
+            Padding="20,12">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Text="Real-time vehicle telemetry monitoring" 
+                   FontSize="12"
+                   Foreground="#6B7280"
+                   VerticalAlignment="Center" />
+        
+        <TextBlock Grid.Column="1"
+                   Text="{Binding LastUpdateTime, StringFormat={}Last Update: {0:HH:mm:ss}}"
+                   FontSize="12"
+                   Foreground="#6B7280"
+                   VerticalAlignment="Center" />
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

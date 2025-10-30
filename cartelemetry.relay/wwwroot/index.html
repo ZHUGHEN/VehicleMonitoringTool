@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Relay Monitor</title></head>
+<body>
+  <h1>Relay Live</h1>
+  <pre id="log">waiting…</pre>
+  <script src="https://unpkg.com/@microsoft/signalr@8.0.0/dist/browser/signalr.min.js"></script>
+  <script>
+    const log = document.getElementById('log');
+    const conn = new signalR.HubConnectionBuilder()
+      .withUrl(`/ws?vehicleId=${encodeURIComponent('Z33-01')}&sessionId=${encodeURIComponent('dev-local')}`)
+      .withAutomaticReconnect()
+      .build();
+
+    conn.on("stream", env => {
+      if (env.type === "telemetry") {
+        const p = env.payload;
+        const mph = (p.speedKmh ?? 0) * 0.621371;
+        log.textContent =
+          `RPM: ${p.rpm?.toFixed(0)} | Speed: ${mph.toFixed(1)} mph | Coolant: ${p.coolantC?.toFixed(0)} °C\n` +
+          `ts: ${new Date(env.ts).toLocaleTimeString()}`;
+      }
+    });
+
+    conn.start().catch(e => log.textContent = 'connect failed: ' + e);
+  </script>
+</body>
+</html>
