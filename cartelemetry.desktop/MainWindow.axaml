@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:CarTelemetry.Desktop"
+        xmlns:local="clr-namespace:CarTelemetry.Desktop"
         x:Class="CarTelemetry.Desktop.MainWindow"
         x:DataType="vm:MainViewModel"
         Width="1024" Height="600" 
@@ -11,13 +12,25 @@
         <!--ExtendClientAreaToDecorationsHint-->
         <!--SystemDecorations="None"-->
 
-  <!-- Main Layout -->
+  <!-- Window Resources -->
+  <Window.Resources>
+    <local:RpmToColorConverter x:Key="RpmToColorConverter" />
+  </Window.Resources>
+  
+  <!-- Main Layout: Header, Content (Nested Grid), Footer -->
   <Grid RowDefinitions="Auto,*,Auto">
+    <Grid.Background>
+        <ImageBrush Source="/Assets/dashboard-background.webp" 
+                    Stretch="UniformToFill" 
+                    Opacity="0.3" />
+      </Grid.Background>
     
     <!-- Header -->
     <Border Grid.Row="0" 
-            Background="#5c5c5c"
-            Padding="20,16">
+            Background="rgba(0, 0, 0, 0.85)"
+            Padding="20,16"
+            BorderBrush="rgba(110, 0, 0, 0.81)"
+            BorderThickness="0,0,0,1">
       <Grid ColumnDefinitions="*,Auto">
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
           <TextBlock Text="🚗" FontSize="24" Margin="0,0,12,0" />
@@ -28,133 +41,292 @@
                      VerticalAlignment="Center" />
         </StackPanel>
         
-        <!-- Connection Status -->
-        <Border Grid.Column="1" 
-                Background="Green"
-                CornerRadius="12" 
-                Padding="12,6">
-          <TextBlock Text="Connected" 
-                     Foreground="White" 
-                     FontSize="12" 
-                     FontWeight="Medium" />
-        </Border>
+        <!-- Settings Button -->
+        <Button Grid.Column="1" 
+                Background="Transparent"
+                BorderThickness="0"
+                Padding="16"
+                CornerRadius="8"
+                MinWidth="48"
+                MinHeight="48"
+                ToolTip.Tip="Settings">
+          <TextBlock Text="⚙️" 
+                     FontSize="24" 
+                     Foreground="White"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center" />
+        </Button>
       </Grid>
     </Border>
 
-    <!-- Main Content Area -->
-    <ScrollViewer Grid.Row="1" Padding="20">
-      <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,*,*">
+    <!-- Content Area: Nested 2x3 Gauge Grid -->
+    <Grid Grid.Row="1" RowDefinitions="*,*,*">
+      
+
+      <!-- Nested Gauge Grid: 3 rows x 2 columns -->
+      <Grid Grid.Row="0" Grid.RowSpan="3" RowDefinitions="*,*,*" ColumnDefinitions="*,*">
         
-        <!-- Title Section -->
-        <TextBlock Grid.Row="0" Grid.ColumnSpan="3"
-                   Text="Live Vehicle Data"
-                   FontSize="24"
-                   FontWeight="SemiBold"
-                   Margin="0,0,0,20"
-                   HorizontalAlignment="Center" />
+        <!-- Row 1: Engine Speed -->
+        <Border Grid.Row="0" Grid.Column="0" 
+                Background="rgba(0, 0, 0, 0.85)"
+                BorderBrush="rgba(110, 0, 0, 0.81)"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Margin="16,8,8,8">
+          
+          <Grid RowDefinitions="Auto,*" ColumnDefinitions="90,*" VerticalAlignment="Center">
+            <!-- Title -->
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" 
+                       Text="Engine Speed" 
+                       FontSize="20" 
+                       FontWeight="Medium"
+                       HorizontalAlignment="Center" 
+                       Foreground="#9CA3AF"
+                       Margin="0,0,0,4" />
+            
+            <!-- Left: Number and Unit -->
+            <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+              <TextBlock Text="{Binding Rpm, StringFormat={}{0:F0}}" 
+                         FontSize="28"
+                         FontWeight="Bold"
+                         HorizontalAlignment="Center"
+                         Foreground="{Binding Rpm, Converter={StaticResource RpmToColorConverter}}" />
+              <TextBlock Text="RPM" 
+                         FontSize="12"
+                         HorizontalAlignment="Center"
+                         Foreground="#6B7280"
+                         Margin="0,2,0,0" />
+            </StackPanel>
+            
+            <!-- Right: Progress Bar -->
+            <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
+              <ProgressBar Value="{Binding Rpm}" 
+                           Maximum="8000" 
+                           Height="20"
+                           Foreground="{Binding Rpm, Converter={StaticResource RpmToColorConverter}}" />
+            </StackPanel>
+          </Grid>
+        </Border>
+        <!-- Row 1: Vehicle Speed-->
+        <Border Grid.Row="0" Grid.Column="1" 
+                Background="rgba(0, 0, 0, 0.85)"
+                BorderBrush="rgba(110, 0, 0, 0.81)"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Margin="8, 8, 16, 8">
+          
+          <Grid RowDefinitions="Auto,*" ColumnDefinitions="90,*" VerticalAlignment="Center">
+            <!-- Title -->
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" 
+                       Text="Vehicle Speed" 
+                       FontSize="20" 
+                       FontWeight="Medium"
+                       HorizontalAlignment="Center" 
+                       Foreground="#9CA3AF"
+                       Margin="0,0,0,4" />
+            
+            <!-- Left: Number and Unit -->
+            <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+              <TextBlock Text="{Binding SpeedMph, StringFormat={}{0:N0}}" 
+                         FontSize="28"
+                         FontWeight="Bold"
+                         HorizontalAlignment="Center"
+                         Foreground="#3B82F6" />
+              <TextBlock Text="MPH" 
+                         FontSize="12"
+                         HorizontalAlignment="Center"
+                         Foreground="#6B7280"
+                         Margin="0,2,0,0" />
+            </StackPanel>
+            
+            <!-- Right: Progress Bar -->
+            <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
+              <ProgressBar Value="{Binding SpeedMph}" 
+                           Maximum="200" 
+                           Height="20"
+                           Foreground="#3B82F6" />
+            </StackPanel>
+          </Grid>
+        </Border>
 
-        <!-- RPM Card -->
+        <!-- Row 2: Coolant Temp -->
         <Border Grid.Row="1" Grid.Column="0" 
-                Background="White"
-                BorderBrush="#E5E7EB"
+                Background="rgba(0, 0, 0, 0.85)"
+                BorderBrush="rgba(110, 0, 0, 0.81)"
                 BorderThickness="1"
                 CornerRadius="8"
                 Padding="16"
-                Margin="8">
+                Margin="16,8,8,8">
           
-          <StackPanel>
-            <TextBlock Text="⚡" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,12" />
+          <Grid RowDefinitions="Auto,*" ColumnDefinitions="90,*" VerticalAlignment="Center">
+            <!-- Title -->
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" 
+                       Text="Coolant Temperature" 
+                       FontSize="20" 
+                       FontWeight="Medium"
+                       HorizontalAlignment="Center" 
+                       Foreground="#9CA3AF"
+                       Margin="0,0,0,4" />
             
-            <TextBlock Text="{Binding Rpm, StringFormat={}{0:N0}}" 
-                       FontSize="32"
-                       FontWeight="Bold"
-                       HorizontalAlignment="Center"
-                       Foreground="#FF6B35" />
-            <TextBlock Text="RPM" 
-                       FontSize="14"
-                       HorizontalAlignment="Center"
-                       Foreground="#6B7280"
-                       Margin="0,8,0,0" />
+            <!-- Left: Number and Unit -->
+            <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+              <TextBlock Text="{Binding CoolantC, StringFormat={}{0:N0}}" 
+                         FontSize="28"
+                         FontWeight="Bold"
+                         HorizontalAlignment="Center"
+                         Foreground="#EF4444" />
+              <TextBlock Text="°C" 
+                         FontSize="12"
+                         HorizontalAlignment="Center"
+                         Foreground="#6B7280"
+                         Margin="0,2,0,0" />
+            </StackPanel>
             
-            <!-- RPM Progress Bar -->
-            <ProgressBar Value="{Binding Rpm}" 
-                         Maximum="8000" 
-                         Margin="0,12,0,0"
-                         Height="6"
-                         Foreground="#FF6B35" />
-          </StackPanel>
+            <!-- Right: Progress Bar -->
+            <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
+              <ProgressBar Value="{Binding CoolantC}" 
+                           Maximum="120" 
+                           Height="20"
+                           Foreground="#EF4444" />
+            </StackPanel>
+          </Grid>
+        </Border>
+        <!-- Row 2: Intake Air Temp-->
+        <Border Grid.Row="2" Grid.Column="1" 
+                Background="rgba(0, 0, 0, 0.85)"
+                BorderBrush="rgba(110, 0, 0, 0.81)"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Margin="8,8,16,8">
+          
+          <Grid RowDefinitions="Auto,*" ColumnDefinitions="90,*" VerticalAlignment="Center">
+            <!-- Title -->
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" 
+                       Text="Throttle Position" 
+                       FontSize="20" 
+                       FontWeight="Medium"
+                       HorizontalAlignment="Center" 
+                       Foreground="#9CA3AF"
+                       Margin="0,0,0,4" />
+            
+            <!-- Left: Number and Unit -->
+            <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+              <TextBlock Text="--" 
+                         FontSize="28"
+                         FontWeight="Bold"
+                         HorizontalAlignment="Center"
+                         Foreground="#F59E0B" />
+              <TextBlock Text="%" 
+                         FontSize="12"
+                         HorizontalAlignment="Center"
+                         Foreground="#6B7280"
+                         Margin="0,2,0,0" />
+            </StackPanel>
+            
+            <!-- Right: Progress Bar -->
+            <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
+              <ProgressBar Value="0" 
+                           Maximum="100" 
+                           Height="20"
+                           Foreground="#F59E0B" />
+            </StackPanel>
+          </Grid>
         </Border>
 
-        <!-- Speed Card -->
+        <!-- Row 3: Oil Pressure -->
+        <Border Grid.Row="2" Grid.Column="0" 
+                Background="rgba(0, 0, 0, 0.85)"
+                BorderBrush="rgba(110, 0, 0, 0.81)"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Margin="16,8,8,8">
+          
+          <Grid RowDefinitions="Auto,*" ColumnDefinitions="90,*" VerticalAlignment="Center">
+            <!-- Title -->
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" 
+                       Text="Oil Pressure" 
+                       FontSize="20" 
+                       FontWeight="Medium"
+                       HorizontalAlignment="Center" 
+                       Foreground="#9CA3AF"
+                       Margin="0,0,0,4" />
+            
+            <!-- Left: Number and Unit -->
+            <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+              <TextBlock Text="--" 
+                         FontSize="28"
+                         FontWeight="Bold"
+                         HorizontalAlignment="Center"
+                         Foreground="#8B5CF6" />
+              <TextBlock Text="PSI" 
+                         FontSize="12"
+                         HorizontalAlignment="Center"
+                         Foreground="#6B7280"
+                         Margin="0,2,0,0" />
+            </StackPanel>
+            
+            <!-- Right: Progress Bar -->
+            <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
+              <ProgressBar Value="0" 
+                           Maximum="80" 
+                           Height="20"
+                           Foreground="#8B5CF6" />
+            </StackPanel>
+          </Grid>
+        </Border>
+        <!-- Row 3: Throttle Position -->
         <Border Grid.Row="1" Grid.Column="1" 
-                Background="White"
-                BorderBrush="#E5E7EB"
+                Background="rgba(0, 0, 0, 0.85)"
+                BorderBrush="rgba(110, 0, 0, 0.81)"
                 BorderThickness="1"
                 CornerRadius="8"
                 Padding="16"
-                Margin="8">
+                Margin="8,8,16,8">
           
-          <StackPanel>
-            <TextBlock Text="🏎️" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,12" />
+          <Grid RowDefinitions="Auto,*" ColumnDefinitions="90,*" VerticalAlignment="Center">
+            <!-- Title -->
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" 
+                       Text="Intake Air Temp" 
+                       FontSize="20" 
+                       FontWeight="Medium"
+                       HorizontalAlignment="Center" 
+                       Foreground="#9CA3AF"
+                       Margin="0,0,0,4" />
             
-            <TextBlock Text="{Binding SpeedMph, StringFormat={}{0:F1}}" 
-                       FontSize="32"
-                       FontWeight="Bold"
-                       HorizontalAlignment="Center"
-                       Foreground="#2E86AB" />
-            <TextBlock Text="MPH" 
-                       FontSize="14"
-                       HorizontalAlignment="Center"
-                       Foreground="#6B7280"
-                       Margin="0,8,0,0" />
+            <!-- Left: Number and Unit -->
+            <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+              <TextBlock Text="--" 
+                         FontSize="28"
+                         FontWeight="Bold"
+                         HorizontalAlignment="Center"
+                         Foreground="#059669" />
+              <TextBlock Text="°C" 
+                         FontSize="12"
+                         HorizontalAlignment="Center"
+                         Foreground="#6B7280"
+                         Margin="0,2,0,0" />
+            </StackPanel>
             
-            <!-- Speed Progress Bar -->
-            <ProgressBar Value="{Binding SpeedMph}" 
-                         Maximum="150" 
-                         Margin="0,12,0,0"
-                         Height="6"
-                         Foreground="#2E86AB" />
-          </StackPanel>
-        </Border>
-
-        <!-- Coolant Temperature Card -->
-        <Border Grid.Row="1" Grid.Column="2" 
-                Background="White"
-                BorderBrush="#E5E7EB"
-                BorderThickness="1"
-                CornerRadius="8"
-                Padding="16"
-                Margin="8">
-          
-          <StackPanel>
-            <TextBlock Text="🌡️" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,12" />
-            
-            <TextBlock Text="{Binding CoolantC, StringFormat={}{0:F0}}" 
-                       FontSize="32"
-                       FontWeight="Bold"
-                       HorizontalAlignment="Center"
-                       Foreground="#A23B72" />
-            <TextBlock Text="°C" 
-                       FontSize="14"
-                       HorizontalAlignment="Center"
-                       Foreground="#6B7280"
-                       Margin="0,8,0,0" />
-            
-            <!-- Temperature Progress Bar -->
-            <ProgressBar Value="{Binding CoolantC}" 
-                         Maximum="120" 
-                         Margin="0,12,0,0"
-                         Height="6"
-                         Foreground="#A23B72" />
-          </StackPanel>
+            <!-- Right: Progress Bar -->
+            <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
+              <ProgressBar Value="0" 
+                           Maximum="60" 
+                           Height="20"
+                           Foreground="#059669" />
+            </StackPanel>
+          </Grid>
         </Border>
       </Grid>
-    </ScrollViewer>
+    </Grid>
 
     <!-- Footer/Status Bar -->
     <Border Grid.Row="2" 
-            Background="#F9FAFB"
-            BorderBrush="#E5E7EB"
+            Background="rgba(0, 0, 0, 0.85)"
+            BorderBrush="rgba(110, 0, 0, 0.81)"
             BorderThickness="0,1,0,0"
             Padding="20,12">
       <Grid ColumnDefinitions="*,Auto">

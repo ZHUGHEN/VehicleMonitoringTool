@@ -24,4 +24,8 @@
   <ItemGroup>
     <ProjectReference Include="..\cartelemetry.core\cartelemetry.core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
 </Project>

@@ -75,3 +75,4 @@ C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\obj\Debug\net9.0\refint\
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\obj\Debug\net9.0\cartelemetry.desktop.pdb
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\obj\Debug\net9.0\cartelemetry.desktop.genruntimeconfig.cache
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\obj\Debug\net9.0\ref\cartelemetry.desktop.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\obj\Debug\net9.0\cartelemetry.desktop.sourcelink.json

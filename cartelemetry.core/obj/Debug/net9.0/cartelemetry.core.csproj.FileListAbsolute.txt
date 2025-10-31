@@ -9,3 +9,4 @@ C:\dev\repos\VehicleMonitoringTool\cartelemetry.core\obj\Debug\net9.0\cartelemet
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.core\obj\Debug\net9.0\refint\cartelemetry.core.dll
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.core\obj\Debug\net9.0\cartelemetry.core.pdb
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.core\obj\Debug\net9.0\ref\cartelemetry.core.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.core\obj\Debug\net9.0\cartelemetry.core.sourcelink.json
