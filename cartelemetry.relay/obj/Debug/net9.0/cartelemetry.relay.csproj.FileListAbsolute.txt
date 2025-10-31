@@ -27,3 +27,4 @@ C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\carteleme
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\ref\cartelemetry.relay.dll
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\bin\Debug\net9.0\cartelemetry.relay.staticwebassets.runtime.json
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\compressed\63usl27swi-q9394xfblu.gz
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\cartelemetry.relay.sourcelink.json

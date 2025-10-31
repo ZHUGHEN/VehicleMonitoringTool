@@ -48,3 +48,4 @@ C:\dev\repos\VehicleMonitoringTool\cartelemetry.agent\obj\Debug\net9.0\refint\ca
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.agent\obj\Debug\net9.0\cartelemetry.agent.pdb
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.agent\obj\Debug\net9.0\cartelemetry.agent.genruntimeconfig.cache
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.agent\obj\Debug\net9.0\ref\cartelemetry.agent.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.agent\obj\Debug\net9.0\cartelemetry.agent.sourcelink.json
