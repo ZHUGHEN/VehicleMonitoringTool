@@ -48,6 +48,7 @@ class Program
             .AddLogging(builder => builder.AddConsole().AddConfiguration(configuration.GetSection("Logging")))
             .AddSingleton<IObdAdapter, MockObdAdapter>()   // swap to Elm327SerialAdapter later
             .AddSingleton<IObdPoller, ObdPoller>()
+            .AddSingleton<IDtcDescriptionService, DtcDescriptionService>() // DTC description lookup
             .AddSingleton<IDtcService, DtcService>()       // DTC diagnostic service
             
             // Agent/Relay services for transmission

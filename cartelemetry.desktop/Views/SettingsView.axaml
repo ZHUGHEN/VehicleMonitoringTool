@@ -14,7 +14,8 @@
     <converters:TransmissionColorConverter x:Key="TransmissionColorConverter" />
   </UserControl.Resources>
 
-  <ScrollViewer>
+  <ScrollViewer AllowAutoHide="True"
+                IsScrollChainingEnabled="True">
     <StackPanel Margin="24" Spacing="24">
       
       <!-- Header -->

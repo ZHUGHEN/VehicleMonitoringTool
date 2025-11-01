@@ -16,7 +16,13 @@ public interface IDtcService
 public sealed class DtcService : IDtcService
 {
     private readonly IObdAdapter _obd;
-    public DtcService(IObdAdapter obd) => _obd = obd;
+    private readonly IDtcDescriptionService _descriptionService;
+    
+    public DtcService(IObdAdapter obd, IDtcDescriptionService descriptionService) 
+    {
+        _obd = obd;
+        _descriptionService = descriptionService;
+    }
 
     public async Task<IReadOnlyList<DtcCode>> ReadAsync(DtcClass kind, CancellationToken ct)
     {
@@ -30,7 +36,7 @@ public sealed class DtcService : IDtcService
         };
 
         var raw = await _obd.SendRawAsync(cmd, ct);
-        return ParseDtcs(raw);
+        return ParseDtcs(raw, _descriptionService);
     }
 
     public async Task<bool> ClearAsync(CancellationToken ct)
@@ -45,7 +51,7 @@ public sealed class DtcService : IDtcService
 
     // ---------- Parsing ----------
 
-    private static IReadOnlyList<DtcCode> ParseDtcs(string raw)
+    private static IReadOnlyList<DtcCode> ParseDtcs(string raw, IDtcDescriptionService descriptionService)
     {
         var hex = CleanToHex(raw);                // e.g., "430133000000"
         if (hex.Length < 2) return Array.Empty<DtcCode>();
@@ -58,10 +64,10 @@ public sealed class DtcService : IDtcService
 
         int pos = hdrIdx + 2; // past header byte
 
-        // Some ECUs add a status/length byte next; if remaining length is odd, skip 1 byte (2 hex chars)
-        if (((hex.Length - pos) % 4) != 0 && (hex.Length - pos) >= 2)
-            pos += 2;
-
+        // Note: Some ECUs include a count byte, others don't. 
+        // For our mock data, we'll assume no count byte for simplicity.
+        // In real implementations, you might need to detect the format.
+        
         var list = new List<DtcCode>();
 
         // Each DTC is 2 bytes => 4 hex chars (A,B)
@@ -74,8 +80,10 @@ public sealed class DtcService : IDtcService
 
             if (a == 0 && b == 0) continue;       // padding
 
-            var (system, code) = DecodeDtc(a, b); // e.g., ("P", "P0133")
-            list.Add(new DtcCode(system, code, null));
+            var (systemCode, code) = DecodeDtc(a, b); // e.g., ("P", "P0133")
+            var systemName = descriptionService.GetSystemName(systemCode);
+            var description = descriptionService.GetDescription(code);
+            list.Add(new DtcCode(systemName, code, description));
         }
 
         return list;
