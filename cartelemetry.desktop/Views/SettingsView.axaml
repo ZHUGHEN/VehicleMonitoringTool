@@ -1,0 +1,255 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:CarTelemetry.Desktop.ViewModels"
+             xmlns:converters="clr-namespace:CarTelemetry.Desktop.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="CarTelemetry.Desktop.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+
+  <!-- UserControl Resources -->
+  <UserControl.Resources>
+    <converters:TransmissionStatusConverter x:Key="TransmissionStatusConverter" />
+    <converters:TransmissionColorConverter x:Key="TransmissionColorConverter" />
+  </UserControl.Resources>
+
+  <ScrollViewer>
+    <StackPanel Margin="24" Spacing="24">
+      
+      <!-- Header -->
+      <StackPanel Spacing="8">
+        <TextBlock Text="⚙️ Settings" 
+                   FontSize="32" 
+                   FontWeight="Bold"
+                   Margin="0,0,0,8" />
+        <TextBlock Text="Configure your telemetry system"
+                   FontSize="16"
+                   Foreground="Gray" />
+      </StackPanel>
+
+      <!-- System Information (Read-only) -->
+      <Border Background="rgba(55, 55, 55, 1)" 
+              BorderBrush="#E9ECEF" 
+              BorderThickness="2" 
+              CornerRadius="12" 
+              Padding="24">
+        <StackPanel Spacing="20">
+          <TextBlock Text="🔧 System Information" 
+                     FontSize="20" 
+                     FontWeight="SemiBold" />
+          
+          <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="120,*">
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Base URL:" FontWeight="Medium" FontSize="16" Margin="0,0,16,16" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding BaseUrl}" FontSize="16" Margin="0,0,0,16" />
+            
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Vehicle ID:" FontWeight="Medium" FontSize="16" Margin="0,0,16,16" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding VehicleId}" FontSize="16" Margin="0,0,0,16" />
+            
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Session ID:" FontWeight="Medium" FontSize="16" Margin="0,0,16,16" />
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SessionId}" FontSize="16" Margin="0,0,0,16" />
+            
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Status:" FontWeight="Medium" FontSize="16" Margin="0,0,16,0" />
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="Connected" Foreground="Green" FontSize="16" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- Transmission Control -->
+      <Border Background="rgba(55, 55, 55, 1)" 
+              BorderBrush="#F59E0B" 
+              BorderThickness="2" 
+              CornerRadius="12" 
+              Padding="24">
+        <StackPanel Spacing="20">
+          <TextBlock Text="� Transmission Control" 
+                     FontSize="20" 
+                     FontWeight="SemiBold" />
+          
+          <StackPanel Spacing="16">
+            <TextBlock Text="Control telemetry data transmission to the relay service"
+                       FontSize="14"
+                       Foreground="Gray" />
+            
+            <Button Command="{Binding ToggleTransmissionCommand}"
+                    Background="{Binding IsTransmitting, Converter={StaticResource TransmissionColorConverter}}"
+                    BorderBrush="#DC2626"
+                    BorderThickness="2"
+                    Padding="24,16"
+                    CornerRadius="12"
+                    MinHeight="60"
+                    HorizontalAlignment="Stretch">
+              <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+                <TextBlock Text="📡" FontSize="24" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding IsTransmitting, Converter={StaticResource TransmissionStatusConverter}}" 
+                           FontSize="18" 
+                           FontWeight="SemiBold"
+                           Foreground="White"
+                           VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <!-- Display Configuration -->
+      <Border Background="rgba(55, 55, 55, 1)" 
+              BorderBrush="#3B82F6" 
+              BorderThickness="2" 
+              CornerRadius="12" 
+              Padding="24">
+        <StackPanel Spacing="20">
+          <TextBlock Text="� Display Configuration" 
+                     FontSize="20" 
+                     FontWeight="SemiBold" />
+          
+          <TextBlock Text="Choose which gauges to display in each of the 6 gauge slots"
+                     FontSize="14"
+                     Foreground="Gray" />
+          
+          <!-- 6 Gauge Selection Dropdowns -->
+          <StackPanel Spacing="16">
+            <!-- Gauge Slot 1 -->
+            <StackPanel>
+              <TextBlock Text="Gauge Slot 1:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
+              <ComboBox ItemsSource="{Binding AvailableGauges}"
+                        SelectedItem="{Binding GaugeSlot1}"
+                        MinHeight="45"
+                        FontSize="16"
+                        Padding="12">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding DisplayText}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+            
+            <!-- Gauge Slot 2 -->
+            <StackPanel>
+              <TextBlock Text="Gauge Slot 2:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
+              <ComboBox ItemsSource="{Binding AvailableGauges}"
+                        SelectedItem="{Binding GaugeSlot2}"
+                        MinHeight="45"
+                        FontSize="16"
+                        Padding="12">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding DisplayText}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+            
+            <!-- Gauge Slot 3 -->
+            <StackPanel>
+              <TextBlock Text="Gauge Slot 3:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
+              <ComboBox ItemsSource="{Binding AvailableGauges}"
+                        SelectedItem="{Binding GaugeSlot3}"
+                        MinHeight="45"
+                        FontSize="16"
+                        Padding="12">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding DisplayText}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+            
+            <!-- Gauge Slot 4 -->
+            <StackPanel>
+              <TextBlock Text="Gauge Slot 4:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
+              <ComboBox ItemsSource="{Binding AvailableGauges}"
+                        SelectedItem="{Binding GaugeSlot4}"
+                        MinHeight="45"
+                        FontSize="16"
+                        Padding="12">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding DisplayText}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+            
+            <!-- Gauge Slot 5 -->
+            <StackPanel>
+              <TextBlock Text="Gauge Slot 5:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
+              <ComboBox ItemsSource="{Binding AvailableGauges}"
+                        SelectedItem="{Binding GaugeSlot5}"
+                        MinHeight="45"
+                        FontSize="16"
+                        Padding="12">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding DisplayText}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+            
+            <!-- Gauge Slot 6 -->
+            <StackPanel>
+              <TextBlock Text="Gauge Slot 6:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
+              <ComboBox ItemsSource="{Binding AvailableGauges}"
+                        SelectedItem="{Binding GaugeSlot6}"
+                        MinHeight="45"
+                        FontSize="16"
+                        Padding="12">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding DisplayText}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <!-- Quick Actions -->
+      <Border Background="rgba(55, 55, 55, 1)" 
+              BorderBrush="#EF4444" 
+              BorderThickness="2" 
+              CornerRadius="12" 
+              Padding="24">
+        <StackPanel Spacing="20">
+          <TextBlock Text="⚡ Quick Actions" 
+                     FontSize="20" 
+                     FontWeight="SemiBold" />
+          
+          <StackPanel Spacing="16">
+            <Button Content="� Reset to Defaults" 
+                    Command="{Binding LoadDefaultsCommand}"
+                    Background="#EBF8FF"
+                    BorderBrush="#3B82F6"
+                    BorderThickness="2"
+                    Foreground="#1E40AF"
+                    Padding="24,16"
+                    CornerRadius="12"
+                    MinHeight="60"
+                    HorizontalAlignment="Stretch"
+                    FontSize="16"
+                    FontWeight="SemiBold" />
+            
+            <Button Content="💾 Save All Settings" 
+                    Command="{Binding SaveCommand}"
+                    Background="#10B981"
+                    BorderBrush="#059669"
+                    BorderThickness="2"
+                    Foreground="White"
+                    Padding="24,16"
+                    CornerRadius="12"
+                    MinHeight="60"
+                    HorizontalAlignment="Stretch"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    IsEnabled="{Binding IsModified}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+      
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

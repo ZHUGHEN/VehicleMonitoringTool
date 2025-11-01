@@ -1,30 +1,108 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Threading.Tasks;
 using CarTelemetry.Desktop.Configuration;
+using CarTelemetry.Desktop.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace CarTelemetry.Desktop.ViewModels;
 
+public enum GaugeType
+{
+    None,
+    EngineRpm,
+    EngineLoad,
+    CoolantTemperature,
+    VehicleSpeed,
+    FuelPressure,
+    FuelTrim
+}
+
+public record GaugeOption(GaugeType Type, string Icon, string DisplayName)
+{
+    public string DisplayText => $"{Icon} {DisplayName}";
+}
+
 public partial class SettingsViewModel : ObservableObject
 {
+    private readonly IAgentService _agentService;
+    
     [ObservableProperty] private string _baseUrl = "http://localhost:5000";
     [ObservableProperty] private string _vehicleId = "Z33-01";
     [ObservableProperty] private string _sessionId = "dev-local";
     [ObservableProperty] private string _ingestKey = "super-secret-123";
     
     [ObservableProperty] private bool _isModified = false;
+    [ObservableProperty] private bool _isTransmitting = false;
+    
+    // 6 Gauge Selection Dropdowns
+    [ObservableProperty] private GaugeOption _gaugeSlot1;
+    [ObservableProperty] private GaugeOption _gaugeSlot2;
+    [ObservableProperty] private GaugeOption _gaugeSlot3;
+    [ObservableProperty] private GaugeOption _gaugeSlot4;
+    [ObservableProperty] private GaugeOption _gaugeSlot5;
+    [ObservableProperty] private GaugeOption _gaugeSlot6;
 
-    public SettingsViewModel()
+    // Available gauge options for dropdowns
+    public List<GaugeOption> AvailableGauges { get; } = new()
     {
+        new GaugeOption(GaugeType.None, "🚫", "None"),
+        new GaugeOption(GaugeType.EngineRpm, "🔄", "Engine RPM"),
+        new GaugeOption(GaugeType.EngineLoad, "⚡", "Engine Load"),
+        new GaugeOption(GaugeType.CoolantTemperature, "🌡️", "Coolant Temperature"),
+        new GaugeOption(GaugeType.VehicleSpeed, "🏎️", "Vehicle Speed"),
+        new GaugeOption(GaugeType.FuelPressure, "⛽", "Fuel Pressure"),
+        new GaugeOption(GaugeType.FuelTrim, "🔧", "Fuel Trim")
+    };
+
+    public SettingsViewModel(IAgentService agentService)
+    {
+        _agentService = agentService;
+        
+        // Set default selections (will be overridden by LoadGaugeConfigurationAsync)
+        _gaugeSlot1 = AvailableGauges.First(g => g.Type == GaugeType.EngineRpm);
+        _gaugeSlot2 = AvailableGauges.First(g => g.Type == GaugeType.EngineLoad);
+        _gaugeSlot3 = AvailableGauges.First(g => g.Type == GaugeType.CoolantTemperature);
+        _gaugeSlot4 = AvailableGauges.First(g => g.Type == GaugeType.VehicleSpeed);
+        _gaugeSlot5 = AvailableGauges.First(g => g.Type == GaugeType.None);
+        _gaugeSlot6 = AvailableGauges.First(g => g.Type == GaugeType.None);
+        
+        // Subscribe to transmission state changes
+        _agentService.TransmissionStateChanged += (s, isTransmitting) =>
+        {
+            IsTransmitting = isTransmitting;
+        };
+        
         // Monitor for changes
         PropertyChanged += (s, e) =>
         {
-            if (e.PropertyName != nameof(IsModified))
+            if (e.PropertyName != nameof(IsModified) && e.PropertyName != nameof(IsTransmitting))
             {
                 IsModified = true;
             }
         };
+        
+        // Load saved configuration
+        _ = Task.Run(LoadGaugeConfigurationAsync);
+    }
+
+    [RelayCommand]
+    public async Task ToggleTransmissionAsync()
+    {
+        if (IsTransmitting)
+        {
+            await _agentService.StopTransmissionAsync();
+        }
+        else
+        {
+            await _agentService.StartTransmissionAsync();
+        }
     }
 
     [RelayCommand]
@@ -47,10 +125,89 @@ public partial class SettingsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void Save()
+    private async Task SaveAsync()
     {
-        // TODO: Implement saving to configuration file
-        IsModified = false;
+        try
+        {
+            // Save gauge configuration
+            var gaugeConfig = GetCurrentGaugeConfiguration();
+            await SaveGaugeConfigurationAsync(gaugeConfig);
+            
+            // TODO: Save relay configuration
+            // var relayConfig = ToConfiguration();
+            // await SaveRelayConfigurationAsync(relayConfig);
+            
+            IsModified = false;
+        }
+        catch (Exception ex)
+        {
+            // TODO: Show error message to user
+            System.Diagnostics.Debug.WriteLine($"Failed to save settings: {ex.Message}");
+        }
+    }
+
+    private GaugeConfiguration GetCurrentGaugeConfiguration()
+    {
+        return new GaugeConfiguration
+        {
+            GaugeSlot1 = GaugeSlot1?.Type ?? GaugeType.None,
+            GaugeSlot2 = GaugeSlot2?.Type ?? GaugeType.None,
+            GaugeSlot3 = GaugeSlot3?.Type ?? GaugeType.None,
+            GaugeSlot4 = GaugeSlot4?.Type ?? GaugeType.None,
+            GaugeSlot5 = GaugeSlot5?.Type ?? GaugeType.None,
+            GaugeSlot6 = GaugeSlot6?.Type ?? GaugeType.None
+        };
+    }
+
+    private async Task SaveGaugeConfigurationAsync(GaugeConfiguration config)
+    {
+        var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CarTelemetry");
+        Directory.CreateDirectory(appDataPath);
+        
+        var filePath = Path.Combine(appDataPath, "gauge-config.json");
+        var json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+        await File.WriteAllTextAsync(filePath, json);
+    }
+
+    public async Task LoadGaugeConfigurationAsync()
+    {
+        try
+        {
+            var appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CarTelemetry");
+            var filePath = Path.Combine(appDataPath, "gauge-config.json");
+            
+            if (!File.Exists(filePath))
+            {
+                // Load default configuration
+                var defaultConfig = GaugeConfiguration.CreateDefault();
+                LoadGaugeConfiguration(defaultConfig);
+                return;
+            }
+
+            var json = await File.ReadAllTextAsync(filePath);
+            var config = JsonSerializer.Deserialize<GaugeConfiguration>(json);
+            
+            if (config != null)
+            {
+                LoadGaugeConfiguration(config);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to load gauge configuration: {ex.Message}");
+            // Fall back to default
+            LoadGaugeConfiguration(GaugeConfiguration.CreateDefault());
+        }
+    }
+
+    private void LoadGaugeConfiguration(GaugeConfiguration config)
+    {
+        GaugeSlot1 = AvailableGauges.First(g => g.Type == config.GaugeSlot1);
+        GaugeSlot2 = AvailableGauges.First(g => g.Type == config.GaugeSlot2);
+        GaugeSlot3 = AvailableGauges.First(g => g.Type == config.GaugeSlot3);
+        GaugeSlot4 = AvailableGauges.First(g => g.Type == config.GaugeSlot4);
+        GaugeSlot5 = AvailableGauges.First(g => g.Type == config.GaugeSlot5);
+        GaugeSlot6 = AvailableGauges.First(g => g.Type == config.GaugeSlot6);
     }
 
     public RelayConfiguration ToConfiguration()

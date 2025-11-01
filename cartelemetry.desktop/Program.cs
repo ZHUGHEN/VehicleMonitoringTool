@@ -60,6 +60,7 @@ class Program
             
             .AddSingleton<MainViewModel>()
             .AddSingleton<DiagnosticsViewModel>()          // Diagnostics view model
+            .AddSingleton<SettingsViewModel>()             // Settings view model
             .BuildServiceProvider();
 
         App.Services = services; // makes DI container accessible to App.axaml.cs

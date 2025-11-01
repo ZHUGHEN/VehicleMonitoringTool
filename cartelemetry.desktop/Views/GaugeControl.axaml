@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CarTelemetry.Desktop.ViewModels"
+             x:Class="CarTelemetry.Desktop.Views.GaugeControl"
+             x:DataType="vm:GaugeViewModel">
+  
+  <Border Background="rgba(0, 0, 0, 0.85)"
+          BorderBrush="rgba(110, 0, 0, 0.81)"
+          BorderThickness="1"
+          CornerRadius="8"
+          Padding="16"
+          Margin="8">
+    
+    <Grid RowDefinitions="Auto,*" ColumnDefinitions="90,*" VerticalAlignment="Center">
+      <!-- Title -->
+      <TextBlock Grid.Row="0" Grid.ColumnSpan="2" 
+                 Text="{Binding Title}" 
+                 FontSize="20" 
+                 FontWeight="Medium"
+                 HorizontalAlignment="Center" 
+                 Foreground="#9CA3AF"
+                 Margin="0,0,0,4" />
+      
+      <!-- Left: Number and Unit -->
+      <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+        <TextBlock Text="{Binding Value, StringFormat={}{0:F0}}" 
+                   FontSize="28"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   Foreground="{Binding Color}" />
+        <TextBlock Text="{Binding Unit}" 
+                   FontSize="12"
+                   HorizontalAlignment="Center"
+                   Foreground="#6B7280"
+                   Margin="0,2,0,0" />
+      </StackPanel>
+      
+      <!-- Right: Progress Bar -->
+      <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
+        <ProgressBar Value="{Binding Value}" 
+                     Maximum="{Binding Maximum}" 
+                     Height="20"
+                     Foreground="{Binding Color}" />
+      </StackPanel>
+    </Grid>
+  </Border>
+</UserControl>
