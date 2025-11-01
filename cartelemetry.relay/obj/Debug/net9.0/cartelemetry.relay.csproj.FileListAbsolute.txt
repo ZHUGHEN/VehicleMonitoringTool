@@ -28,3 +28,4 @@ C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\refint\ca
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\cartelemetry.relay.pdb
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\cartelemetry.relay.genruntimeconfig.cache
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\ref\cartelemetry.relay.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\bin\Debug\net9.0\appsettings.Production.json

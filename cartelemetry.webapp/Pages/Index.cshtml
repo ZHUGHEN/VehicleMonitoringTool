@@ -1,0 +1,63 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Vehicle Telemetry Hub";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Vehicle Telemetry Hub</h1>
+    <p class="lead">Real-time automotive telemetry and racing data platform</p>
+    
+    <div class="row mt-5">
+        <div class="col-md-6 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Live Telemetry Dashboard</h5>
+                    <p class="card-text">View real-time telemetry data from connected vehicles including RPM, speed, temperature, and more.</p>
+                    <a href="/telemetry" class="btn btn-primary btn-lg">Open Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Current Features</h6>
+                    <ul class="text-start">
+                        <li>Real-time RPM monitoring</li>
+                        <li>Vehicle speed tracking</li>
+                        <li>Coolant temperature</li>
+                        <li>Live data streaming</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Coming Soon</h6>
+                    <ul class="text-start text-muted">
+                        <li>GPS racing line mapping</li>
+                        <li>G-force monitoring</li>
+                        <li>Throttle position</li>
+                        <li>Lap time analysis</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">API Endpoints</h6>
+                    <ul class="text-start">
+                        <li><code>/api/health</code> - System status</li>
+                        <li><code>/ingest/{vehicleId}/{sessionId}</code> - Data ingestion</li>
+                        <li><code>/telemetryHub</code> - SignalR connection</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

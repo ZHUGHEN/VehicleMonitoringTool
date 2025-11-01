@@ -1,0 +1,223 @@
+@page
+@model CarTelemetry.WebApp.Pages.TelemetryModel
+@{
+    ViewData["Title"] = "Live Telemetry Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-4">Vehicle Telemetry Dashboard</h1>
+            <p class="lead">Real-time telemetry data from Z33-01</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        Connection Status: <span id="connectionStatus" class="badge bg-secondary">Connecting...</span>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- RPM Gauge -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Engine RPM</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="telemetry-gauge">
+                        <div class="gauge-value" id="rpmValue">0</div>
+                        <div class="gauge-unit">RPM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Speed Gauge -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Vehicle Speed</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="telemetry-gauge">
+                        <div class="gauge-value" id="speedValue">0</div>
+                        <div class="gauge-unit">MPH</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coolant Temperature -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Coolant Temperature</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="telemetry-gauge">
+                        <div class="gauge-value" id="coolantValue">0</div>
+                        <div class="gauge-unit">°C</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Telemetry Log</h5>
+                </div>
+                <div class="card-body">
+                    <div id="telemetryLog" style="height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px;">
+                        <div class="text-muted">Waiting for telemetry data...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Future: Racing Line Visualization -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Racing Line Visualization <span class="badge bg-info">Coming Soon</span></h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-map-marked-alt fa-3x mb-3"></i>
+                        <p>GPS tracking and racing line visualization will be available when motion sensors are added to the vehicle.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .telemetry-gauge {
+        padding: 20px;
+    }
+    
+    .gauge-value {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #0066cc;
+    }
+    
+    .gauge-unit {
+        font-size: 1rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .card {
+        border: 1px solid #dee2e6;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .badge {
+        font-size: 0.875rem;
+    }
+</style>
+
+@section Scripts {
+    <!-- SignalR Client -->
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    
+    <script>
+        "use strict";
+
+        // Vehicle and session identifiers (in production, these could come from URL params)
+        const vehicleId = "Z33-01";
+        const sessionId = "dev-local";  // Must match desktop app's sessionId
+
+        // Initialize SignalR connection
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(`/telemetryHub?vehicleId=${vehicleId}&sessionId=${sessionId}`)
+            .build();
+
+        // Connection event handlers
+        connection.start().then(function () {
+            console.log("Connected to telemetry hub");
+            updateConnectionStatus("Connected", "bg-success");
+        }).catch(function (err) {
+            console.error("Connection failed: ", err.toString());
+            updateConnectionStatus("Failed", "bg-danger");
+        });
+
+        connection.onclose(function () {
+            console.log("Connection closed");
+            updateConnectionStatus("Disconnected", "bg-warning");
+            
+            // Auto-reconnect after 5 seconds
+            setTimeout(function() {
+                updateConnectionStatus("Reconnecting...", "bg-secondary");
+                connection.start();
+            }, 5000);
+        });
+
+        // Handle incoming telemetry data
+        connection.on("stream", function (envelope) {
+            console.log("Received telemetry:", envelope);
+            
+            if (envelope.type === "telemetry" && envelope.payload) {
+                updateTelemetryDisplay(envelope.payload);
+                logTelemetryData(envelope);
+            }
+        });
+
+        // Update telemetry display
+        function updateTelemetryDisplay(payload) {
+            if (payload.rpm !== null && payload.rpm !== undefined) {
+                document.getElementById('rpmValue').textContent = Math.round(payload.rpm);
+            }
+            
+            if (payload.speedKmh !== null && payload.speedKmh !== undefined) {
+                // Convert km/h to mph
+                const speedMph = payload.speedKmh * 0.621371;
+                document.getElementById('speedValue').textContent = Math.round(speedMph);
+            }
+            
+            if (payload.coolantC !== null && payload.coolantC !== undefined) {
+                document.getElementById('coolantValue').textContent = Math.round(payload.coolantC);
+            }
+        }
+
+        // Log telemetry data
+        function logTelemetryData(envelope) {
+            const log = document.getElementById('telemetryLog');
+            const timestamp = new Date(envelope.ts).toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<span class="text-muted">${timestamp}</span> - RPM: ${envelope.payload.rpm}, Speed: ${envelope.payload.speedKmh} km/h, Coolant: ${envelope.payload.coolantC}°C`;
+            
+            log.appendChild(logEntry);
+            
+            // Keep only last 20 entries
+            while (log.children.length > 20) {
+                log.removeChild(log.firstChild);
+            }
+            
+            // Scroll to bottom
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Update connection status
+        function updateConnectionStatus(status, badgeClass) {
+            const statusElement = document.getElementById('connectionStatus');
+            statusElement.textContent = status;
+            statusElement.className = `badge ${badgeClass}`;
+        }
+    </script>
+}

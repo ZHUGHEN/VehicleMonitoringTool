@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("cartelemetry.agent")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d9d68226e3dc3d376037ff60d7cc009babaee9b4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+78c4079d16b6b67f483a3371ec0dbe78c875259d")]
 [assembly: System.Reflection.AssemblyProductAttribute("cartelemetry.agent")]
 [assembly: System.Reflection.AssemblyTitleAttribute("cartelemetry.agent")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

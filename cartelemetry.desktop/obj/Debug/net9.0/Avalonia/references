@@ -30,8 +30,13 @@ C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.9\ref\net9.0\Microso
 C:\Users\Zach\.nuget\packages\microsoft.extensions.configuration.abstractions\9.0.10\lib\net9.0\Microsoft.Extensions.Configuration.Abstractions.dll
 C:\Users\Zach\.nuget\packages\microsoft.extensions.configuration.binder\9.0.10\lib\net9.0\Microsoft.Extensions.Configuration.Binder.dll
 C:\Users\Zach\.nuget\packages\microsoft.extensions.configuration\9.0.10\lib\net9.0\Microsoft.Extensions.Configuration.dll
+C:\Users\Zach\.nuget\packages\microsoft.extensions.configuration.fileextensions\9.0.10\lib\net9.0\Microsoft.Extensions.Configuration.FileExtensions.dll
+C:\Users\Zach\.nuget\packages\microsoft.extensions.configuration.json\9.0.10\lib\net9.0\Microsoft.Extensions.Configuration.Json.dll
 C:\Users\Zach\.nuget\packages\microsoft.extensions.dependencyinjection.abstractions\9.0.10\lib\net9.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\Users\Zach\.nuget\packages\microsoft.extensions.dependencyinjection\9.0.10\lib\net9.0\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\Zach\.nuget\packages\microsoft.extensions.fileproviders.abstractions\9.0.10\lib\net9.0\Microsoft.Extensions.FileProviders.Abstractions.dll
+C:\Users\Zach\.nuget\packages\microsoft.extensions.fileproviders.physical\9.0.10\lib\net9.0\Microsoft.Extensions.FileProviders.Physical.dll
+C:\Users\Zach\.nuget\packages\microsoft.extensions.filesystemglobbing\9.0.10\lib\net9.0\Microsoft.Extensions.FileSystemGlobbing.dll
 C:\Users\Zach\.nuget\packages\microsoft.extensions.logging.abstractions\9.0.10\lib\net9.0\Microsoft.Extensions.Logging.Abstractions.dll
 C:\Users\Zach\.nuget\packages\microsoft.extensions.logging.configuration\9.0.10\lib\net9.0\Microsoft.Extensions.Logging.Configuration.dll
 C:\Users\Zach\.nuget\packages\microsoft.extensions.logging.console\9.0.10\lib\net9.0\Microsoft.Extensions.Logging.Console.dll
