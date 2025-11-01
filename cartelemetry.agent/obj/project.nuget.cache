@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "k+Vucs6KcYo=",
+  "dgSpecHash": "mpnkFEWThks=",
   "success": true,
   "projectFilePath": "C:\\dev\\repos\\VehicleMonitoringTool\\cartelemetry.agent\\cartelemetry.agent.csproj",
   "expectedPackageFiles": [
@@ -31,7 +31,25 @@
     "C:\\Users\\Zach\\.nuget\\packages\\microsoft.extensions.options\\9.0.9\\microsoft.extensions.options.9.0.9.nupkg.sha512",
     "C:\\Users\\Zach\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\9.0.9\\microsoft.extensions.options.configurationextensions.9.0.9.nupkg.sha512",
     "C:\\Users\\Zach\\.nuget\\packages\\microsoft.extensions.primitives\\9.0.9\\microsoft.extensions.primitives.9.0.9.nupkg.sha512",
-    "C:\\Users\\Zach\\.nuget\\packages\\system.diagnostics.eventlog\\9.0.9\\system.diagnostics.eventlog.9.0.9.nupkg.sha512"
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.android-arm.runtime.native.system.io.ports\\9.0.10\\runtime.android-arm.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.android-arm64.runtime.native.system.io.ports\\9.0.10\\runtime.android-arm64.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.android-x64.runtime.native.system.io.ports\\9.0.10\\runtime.android-x64.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.android-x86.runtime.native.system.io.ports\\9.0.10\\runtime.android-x86.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.linux-arm.runtime.native.system.io.ports\\9.0.10\\runtime.linux-arm.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.linux-arm64.runtime.native.system.io.ports\\9.0.10\\runtime.linux-arm64.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.linux-bionic-arm64.runtime.native.system.io.ports\\9.0.10\\runtime.linux-bionic-arm64.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.linux-bionic-x64.runtime.native.system.io.ports\\9.0.10\\runtime.linux-bionic-x64.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.linux-musl-arm.runtime.native.system.io.ports\\9.0.10\\runtime.linux-musl-arm.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.linux-musl-arm64.runtime.native.system.io.ports\\9.0.10\\runtime.linux-musl-arm64.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.linux-musl-x64.runtime.native.system.io.ports\\9.0.10\\runtime.linux-musl-x64.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.linux-x64.runtime.native.system.io.ports\\9.0.10\\runtime.linux-x64.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.maccatalyst-arm64.runtime.native.system.io.ports\\9.0.10\\runtime.maccatalyst-arm64.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.maccatalyst-x64.runtime.native.system.io.ports\\9.0.10\\runtime.maccatalyst-x64.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.native.system.io.ports\\9.0.10\\runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.osx-arm64.runtime.native.system.io.ports\\9.0.10\\runtime.osx-arm64.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\runtime.osx-x64.runtime.native.system.io.ports\\9.0.10\\runtime.osx-x64.runtime.native.system.io.ports.9.0.10.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\system.diagnostics.eventlog\\9.0.9\\system.diagnostics.eventlog.9.0.9.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\system.io.ports\\9.0.10\\system.io.ports.9.0.10.nupkg.sha512"
   ],
   "logs": []
 }

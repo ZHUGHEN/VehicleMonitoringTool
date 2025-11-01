@@ -27,6 +27,19 @@ public sealed class MockObdAdapter : IObdAdapter
     public Task ConnectAsync(CancellationToken ct) => Task.CompletedTask;
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
+    // Mock DTC Code Implementation
+    public Task<string> SendRawAsync(string command, CancellationToken ct)
+{
+    return Task.FromResult(command switch
+    {
+        "03" => "43 01 33 00 00 00", // Example: P0133
+        "07" => "47 00 00 00 00 00",
+        "0A" => "4A 00 00 00 00 00",
+        "04" => "OK",
+        _    => ""
+    });
+}
+
     public Task<double?> ReadRpmAsync(CancellationToken ct)
     {
         return Task.FromResult<double?>(_currentRpm);

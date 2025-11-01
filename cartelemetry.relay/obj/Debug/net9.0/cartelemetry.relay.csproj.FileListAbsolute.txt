@@ -1,5 +1,6 @@
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\bin\Debug\net9.0\appsettings.Development.json
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\bin\Debug\net9.0\appsettings.json
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\bin\Debug\net9.0\cartelemetry.relay.staticwebassets.runtime.json
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\bin\Debug\net9.0\cartelemetry.relay.staticwebassets.endpoints.json
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\bin\Debug\net9.0\cartelemetry.relay.exe
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\bin\Debug\net9.0\cartelemetry.relay.deps.json
@@ -12,10 +13,12 @@ C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\carteleme
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\cartelemetry.relay.AssemblyInfo.cs
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\cartelemetry.relay.csproj.CoreCompileInputs.cache
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\cartelemetry.relay.MvcApplicationPartsAssemblyInfo.cache
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\cartelemetry.relay.sourcelink.json
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\rjimswa.dswa.cache.json
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\scopedcss\bundle\cartelemetry.relay.styles.css
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\compressed\63usl27swi-q9394xfblu.gz
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\staticwebassets.build.json
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\staticwebassets.development.json
@@ -25,6 +28,3 @@ C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\refint\ca
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\cartelemetry.relay.pdb
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\cartelemetry.relay.genruntimeconfig.cache
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\ref\cartelemetry.relay.dll
-C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\bin\Debug\net9.0\cartelemetry.relay.staticwebassets.runtime.json
-C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\compressed\63usl27swi-q9394xfblu.gz
-C:\dev\repos\VehicleMonitoringTool\cartelemetry.relay\obj\Debug\net9.0\cartelemetry.relay.sourcelink.json

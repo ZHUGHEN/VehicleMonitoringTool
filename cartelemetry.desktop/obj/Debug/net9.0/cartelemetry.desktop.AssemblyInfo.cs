@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("cartelemetry.desktop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6781c03aa38a808e4d741be78133fc4a2f0a52e2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+da31a04770a68860beab64799cfa853d85973593")]
 [assembly: System.Reflection.AssemblyProductAttribute("cartelemetry.desktop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("cartelemetry.desktop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
