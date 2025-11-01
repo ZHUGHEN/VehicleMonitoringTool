@@ -96,3 +96,13 @@ C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\obj\Debug\net9.0\refint\
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\obj\Debug\net9.0\cartelemetry.desktop.pdb
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\obj\Debug\net9.0\cartelemetry.desktop.genruntimeconfig.cache
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\obj\Debug\net9.0\ref\cartelemetry.desktop.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Microsoft.Extensions.Configuration.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Microsoft.Extensions.Configuration.Binder.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Microsoft.Extensions.Logging.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Microsoft.Extensions.Logging.Configuration.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Microsoft.Extensions.Logging.Console.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Microsoft.Extensions.Options.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Microsoft.Extensions.Options.ConfigurationExtensions.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Microsoft.Extensions.Primitives.dll

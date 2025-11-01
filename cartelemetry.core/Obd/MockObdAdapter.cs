@@ -29,16 +29,25 @@ public sealed class MockObdAdapter : IObdAdapter
 
     // Mock DTC Code Implementation
     public Task<string> SendRawAsync(string command, CancellationToken ct)
-{
-    return Task.FromResult(command switch
     {
-        "03" => "43 01 33 00 00 00", // Example: P0133
-        "07" => "47 00 00 00 00 00",
-        "0A" => "4A 00 00 00 00 00",
-        "04" => "OK",
-        _    => ""
-    });
-}
+        return Task.FromResult(command switch
+        {
+            // Stored DTCs - simulate some common engine codes
+            "03" => "43 01 33 01 30 02 10 00 00", // P0133 (O2 Sensor), P0130 (O2 Sensor), P0210 (Injector Circuit)
+            
+            // Pending DTCs - simulate intermittent issues
+            "07" => "47 04 20 00 00 00", // P0420 (Catalyst System Efficiency)
+            
+            // Permanent DTCs - simulate emissions-related permanent codes
+            "0A" => "4A 04 42 00 00 00", // P0442 (EVAP System Leak)
+            
+            // Clear DTCs command
+            "04" => "44",
+            
+            // Default
+            _ => ""
+        });
+    }
 
     public Task<double?> ReadRpmAsync(CancellationToken ct)
     {

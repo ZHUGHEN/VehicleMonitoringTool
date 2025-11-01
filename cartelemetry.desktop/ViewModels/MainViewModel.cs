@@ -5,27 +5,53 @@ using System.Threading;
 using System.Threading.Tasks;
 using CarTelemetry.Core;
 using CarTelemetry.Core.Obd;
+using CarTelemetry.Desktop.Services;
+using CommunityToolkit.Mvvm.Input;
 
 namespace CarTelemetry.Desktop.ViewModels;
 
-public sealed class MainViewModel : INotifyPropertyChanged
+public sealed partial class MainViewModel : INotifyPropertyChanged
 {
     private readonly IObdPoller _poller;
+    private readonly IAgentService _agentService;
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private double _rpm, _speedMph, _coolantC;
     private bool _isConnected = false;
+    private bool _isTransmitting = false;
     private DateTime _lastUpdateTime = DateTime.Now;
 
     public double Rpm { get => _rpm; private set { _rpm = value; OnChanged(); } }
     public double SpeedMph { get => _speedMph; private set { _speedMph = value; OnChanged(); } }
     public double CoolantC { get => _coolantC; private set { _coolantC = value; OnChanged(); } }
     public bool IsConnected { get => _isConnected; private set { _isConnected = value; OnChanged(); } }
+    public bool IsTransmitting { get => _isTransmitting; private set { _isTransmitting = value; OnChanged(); } }
     public DateTime LastUpdateTime { get => _lastUpdateTime; private set { _lastUpdateTime = value; OnChanged(); } }
 
-    public MainViewModel(IObdPoller poller)
+    [RelayCommand]
+    public async Task ToggleTransmissionAsync()
+    {
+        if (IsTransmitting)
+        {
+            await _agentService.StopTransmissionAsync();
+        }
+        else
+        {
+            await _agentService.StartTransmissionAsync();
+        }
+    }
+
+    public MainViewModel(IObdPoller poller, IAgentService agentService)
     {
         _poller = poller;
+        _agentService = agentService;
+        
+        // Subscribe to transmission state changes
+        _agentService.TransmissionStateChanged += (s, isTransmitting) =>
+        {
+            IsTransmitting = isTransmitting;
+        };
+        
         _ = RunAsync();
     }
 

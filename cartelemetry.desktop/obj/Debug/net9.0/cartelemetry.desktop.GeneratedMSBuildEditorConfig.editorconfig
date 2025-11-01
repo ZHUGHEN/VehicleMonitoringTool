@@ -29,5 +29,8 @@ build_property.EnableCodeStyleSeverity =
 [C:/dev/repos/VehicleMonitoringTool/cartelemetry.desktop/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[C:/dev/repos/VehicleMonitoringTool/cartelemetry.desktop/Views/DiagnosticsView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [C:/dev/repos/VehicleMonitoringTool/cartelemetry.desktop/Views/MainWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
