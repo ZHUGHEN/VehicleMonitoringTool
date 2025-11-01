@@ -2,6 +2,7 @@
 using System;
 using CarTelemetry.Core;               // <-- add this
 using CarTelemetry.Core.Obd;
+using CarTelemetry.Desktop.ViewModels;
 using Microsoft.Extensions.DependencyInjection; // <-- add this
 
 namespace CarTelemetry.Desktop;

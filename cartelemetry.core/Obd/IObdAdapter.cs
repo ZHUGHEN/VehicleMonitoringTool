@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CarTelemetry.Core;
+namespace CarTelemetry.Core.Obd;
 
 public interface IObdAdapter : IAsyncDisposable
 {

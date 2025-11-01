@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CarTelemetry.Core;
+namespace CarTelemetry.Core.Obd;
 
 public sealed class Elm327Adapter : IObdAdapter
 {

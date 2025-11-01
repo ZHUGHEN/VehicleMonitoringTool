@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "E6GuEu+86BE=",
+  "dgSpecHash": "jTCw61jLanM=",
   "success": true,
   "projectFilePath": "C:\\dev\\repos\\VehicleMonitoringTool\\cartelemetry.desktop\\cartelemetry.desktop.csproj",
   "expectedPackageFiles": [
@@ -19,6 +19,7 @@
     "C:\\Users\\Zach\\.nuget\\packages\\avalonia.themes.simple\\11.3.6\\avalonia.themes.simple.11.3.6.nupkg.sha512",
     "C:\\Users\\Zach\\.nuget\\packages\\avalonia.win32\\11.3.6\\avalonia.win32.11.3.6.nupkg.sha512",
     "C:\\Users\\Zach\\.nuget\\packages\\avalonia.x11\\11.3.6\\avalonia.x11.11.3.6.nupkg.sha512",
+    "C:\\Users\\Zach\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512",
     "C:\\Users\\Zach\\.nuget\\packages\\harfbuzzsharp\\8.3.1.1\\harfbuzzsharp.8.3.1.1.nupkg.sha512",
     "C:\\Users\\Zach\\.nuget\\packages\\harfbuzzsharp.nativeassets.linux\\8.3.1.1\\harfbuzzsharp.nativeassets.linux.8.3.1.1.nupkg.sha512",
     "C:\\Users\\Zach\\.nuget\\packages\\harfbuzzsharp.nativeassets.macos\\8.3.1.1\\harfbuzzsharp.nativeassets.macos.8.3.1.1.nupkg.sha512",

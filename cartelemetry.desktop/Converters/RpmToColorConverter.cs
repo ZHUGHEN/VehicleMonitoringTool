@@ -3,7 +3,7 @@ using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 
-namespace CarTelemetry.Desktop;
+namespace CarTelemetry.Desktop.Converters;
 
 public class RpmToColorConverter : IValueConverter
 {

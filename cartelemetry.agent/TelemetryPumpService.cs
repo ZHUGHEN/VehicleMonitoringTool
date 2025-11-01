@@ -1,4 +1,5 @@
 using CarTelemetry.Core;
+using CarTelemetry.Core.Obd;
 using Microsoft.Extensions.Hosting;
 
 namespace CarTelemetry.Agent;

@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace CarTelemetry.Desktop;
+namespace CarTelemetry.Desktop.Views;
 
 public partial class MainWindow : Window
 {

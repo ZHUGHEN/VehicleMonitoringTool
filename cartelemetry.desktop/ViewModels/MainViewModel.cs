@@ -4,8 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CarTelemetry.Core;
+using CarTelemetry.Core.Obd;
 
-namespace CarTelemetry.Desktop;
+namespace CarTelemetry.Desktop.ViewModels;
 
 public sealed class MainViewModel : INotifyPropertyChanged
 {

@@ -2,6 +2,8 @@ using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using CarTelemetry.Desktop.ViewModels;
+using CarTelemetry.Desktop.Views;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CarTelemetry.Desktop;

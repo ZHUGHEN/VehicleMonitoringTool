@@ -27,6 +27,7 @@ C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Avaloni
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Avalonia.Win32.Automation.dll
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Avalonia.Win32.dll
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Avalonia.X11.dll
+C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\CommunityToolkit.Mvvm.dll
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\HarfBuzzSharp.dll
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\MicroCom.Runtime.dll
 C:\dev\repos\VehicleMonitoringTool\cartelemetry.desktop\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.dll
