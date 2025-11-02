@@ -43,7 +43,7 @@ class Program
         var relayConfig = new RelayConfiguration();
         configuration.GetSection("Relay").Bind(relayConfig);
 
-        // --- add this block (dependency injection setup) ---
+        // Dependency injection setup
         var services = new ServiceCollection()
             .AddLogging(builder => builder.AddConsole().AddConfiguration(configuration.GetSection("Logging")))
             .AddSingleton<IObdAdapter, MockObdAdapter>()   // swap to Elm327SerialAdapter later
