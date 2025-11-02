@@ -1,0 +1,187 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:CarTelemetry.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CarTelemetry.Desktop.Views.LapTimerView"
+             x:DataType="vm:MainViewModel">
+
+  <!-- Main Container with Fixed Layout -->
+  <Grid Margin="20" ColumnDefinitions="Auto,*" RowDefinitions="Auto,*" MaxHeight="600">
+      
+      <!-- Header spanning both columns -->
+      <Border Grid.Row="0" 
+              Grid.ColumnSpan="2"
+              Background="rgba(0, 0, 0, 0.85)"
+              BorderBrush="rgba(110, 0, 0, 0.81)"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="20"
+              Margin="0,0,0,20">
+        <Grid ColumnDefinitions="*,Auto">
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Text="🏁" FontSize="24" Margin="0,0,12,0" />
+            <TextBlock Text="Track Lap Timer" 
+                       FontSize="20" 
+                       FontWeight="SemiBold"
+                       Foreground="White" 
+                       VerticalAlignment="Center" />
+          </StackPanel>
+          
+          <TextBlock Grid.Column="1"
+                     Text="{Binding LapCount, StringFormat='Lap {0}'}"
+                     FontSize="14"
+                     Foreground="#6B7280"
+                     VerticalAlignment="Center" />
+        </Grid>
+      </Border>
+
+      <!-- Control Buttons (Left Side) -->
+      <Border Grid.Row="1"
+              Grid.Column="0"
+              Background="rgba(0, 0, 0, 0.85)"
+              BorderBrush="rgba(110, 0, 0, 0.81)"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="20"
+              Margin="0,0,20,0"
+              Width="180">
+        <Grid RowDefinitions="*,*,*,*" RowSpacing="15">
+          
+          <!-- Start Button -->
+          <Button Grid.Row="0"
+                  Command="{Binding StartTimerCommand}"
+                  Background="#10B981"
+                  BorderThickness="0"
+                  Padding="16,12"
+                  CornerRadius="6"
+                  HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <TextBlock Text="▶️" FontSize="16" Margin="0,0,8,0" />
+              <TextBlock Text="Start" FontSize="14" FontWeight="SemiBold" Foreground="White" />
+            </StackPanel>
+          </Button>
+          
+          <!-- Lap Button -->
+          <Button Grid.Row="1"
+                  Command="{Binding LapTimerCommand}"
+                  Background="#F59E0B"
+                  BorderThickness="0"
+                  Padding="16,12"
+                  CornerRadius="6"
+                  HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <TextBlock Text="🏁" FontSize="16" Margin="0,0,8,0" />
+              <TextBlock Text="Lap" FontSize="14" FontWeight="SemiBold" Foreground="White" />
+            </StackPanel>
+          </Button>
+          
+          <!-- Stop Button -->
+          <Button Grid.Row="2"
+                  Command="{Binding StopTimerCommand}"
+                  Background="#DC2626"
+                  BorderThickness="0"
+                  Padding="16,12"
+                  CornerRadius="6"
+                  HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <TextBlock Text="⏹️" FontSize="16" Margin="0,0,8,0" />
+              <TextBlock Text="Stop" FontSize="14" FontWeight="SemiBold" Foreground="White" />
+            </StackPanel>
+          </Button>
+          
+          <!-- Reset Button -->
+          <Button Grid.Row="3"
+                  Command="{Binding ResetTimerCommand}"
+                  Background="#6B7280"
+                  BorderThickness="0"
+                  Padding="16,12"
+                  CornerRadius="6"
+                  HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <TextBlock Text="🔄" FontSize="16" Margin="0,0,8,0" />
+              <TextBlock Text="Reset" FontSize="14" FontWeight="SemiBold" Foreground="White" />
+            </StackPanel>
+          </Button>
+        </Grid>
+      </Border>
+
+      <!-- Main Timer Display (Right Side) -->
+      <Border Grid.Row="1"
+              Grid.Column="1"
+              Background="rgba(0, 0, 0, 0.85)"
+              BorderBrush="rgba(110, 0, 0, 0.81)"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="40">
+        <Grid RowDefinitions="Auto,Auto">
+          
+          <!-- Timer and Stats Row -->
+          <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,30">
+            
+            <!-- Current Time Display -->
+            <TextBlock Grid.Column="0"
+                       Text="{Binding CurrentLapTime, StringFormat='{}{0:mm\\:ss\\.fff}'}"
+                       FontFamily="Consolas"
+                       FontSize="48"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+            
+            <!-- Best and Last Lap Stats -->
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="30,0,0,0">
+              <TextBlock Text="{Binding BestLapTime, StringFormat='Best: {0:mm\\:ss\\.fff}'}"
+                         FontSize="14"
+                         Foreground="#10B981"
+                         HorizontalAlignment="Left"
+                         Margin="0,0,0,8" />
+              
+              <TextBlock Text="{Binding LastLapTime, StringFormat='Last: {0:mm\\:ss\\.fff}'}"
+                         FontSize="14"
+                         Foreground="#6B7280"
+                         HorizontalAlignment="Left" />
+            </StackPanel>
+          </Grid>
+          
+          <!-- Lap History List -->
+          <Border Grid.Row="1"
+                  Background="rgba(0, 0, 0, 0.5)"
+                  BorderBrush="rgba(110, 0, 0, 0.41)"
+                  BorderThickness="1"
+                  CornerRadius="6"
+                  Padding="15"
+                  Height="150">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+              <ItemsControl ItemsSource="{Binding LapTimes}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,2">
+                      <TextBlock Grid.Column="0"
+                                 Text="{Binding LapNumber, StringFormat='Lap {0}:'}"
+                                 FontSize="12"
+                                 Foreground="#6B7280"
+                                 Width="60" />
+                      <TextBlock Grid.Column="1"
+                                 Text="{Binding Time, StringFormat='{}{0:mm\\:ss\\.fff}'}"
+                                 FontFamily="Consolas"
+                                 FontSize="12"
+                                 Foreground="White"
+                                 HorizontalAlignment="Center" />
+                      <TextBlock Grid.Column="2"
+                                 Text="🏆"
+                                 FontSize="12"
+                                 Foreground="#10B981"
+                                 Width="20"
+                                 IsVisible="{Binding IsBest}" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </Border>
+        </Grid>
+      </Border>
+    </Grid>
+</UserControl>

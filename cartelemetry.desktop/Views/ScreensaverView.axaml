@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:CarTelemetry.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CarTelemetry.Desktop.Views.ScreensaverView"
+             x:DataType="vm:MainViewModel">
+
+  <UserControl.Background>
+    <ImageBrush Source="/Assets/dashboard-background.webp" 
+                Stretch="UniformToFill" 
+                Opacity="0.3" />
+  </UserControl.Background>
+  
+  <Grid>
+    <!-- Logo Image (Layer 2 - Middle) -->
+    <Image Source="avares://cartelemetry.desktop/Assets/nismo-seeklogo_whte2.png"
+           Width="200"
+           Height="200"
+           Stretch="Uniform"
+           HorizontalAlignment="Center"
+           VerticalAlignment="Center" />
+    
+    <!-- Clock Display under Logo -->
+    <TextBlock Text="{Binding CurrentTime, StringFormat='{}{0:h:mm:ss tt}'}"
+               FontFamily="Impact"
+               FontSize="31"
+               FontWeight="Normal"
+               FontStyle="Italic"
+               Foreground="White"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Margin="20,280,20,0"
+               Padding="10" />
+    
+    <!-- Transparent Full-Screen Button (Layer 3 - Top) -->
+    <Button Command="{Binding ExitScreensaverCommand}"
+            BorderThickness="0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            ToolTip.Tip="Touch screen to exit">
+      <Button.Template>
+        <ControlTemplate>
+          <Border Background="Transparent" />
+        </ControlTemplate>
+      </Button.Template>
+    </Button>
+  </Grid>
+</UserControl>

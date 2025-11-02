@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using CarTelemetry.Core;
 using CarTelemetry.Core.Obd;
 using CarTelemetry.Desktop.Configuration;
+using CarTelemetry.Desktop.Models;
 using CarTelemetry.Desktop.Services;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,8 +28,17 @@ public sealed partial class MainViewModel : INotifyPropertyChanged
     private bool _isConnected = false;
     private bool _isTransmitting = false;
     private bool _isShowingSettings = false;
+    private bool _isShowingScreensaver = false;
     private DateTime _lastUpdateTime = DateTime.Now;
+    private DateTime _currentTime = DateTime.Now;
     private GaugeConfiguration _gaugeConfig = GaugeConfiguration.CreateDefault();
+
+    // Lap Timer fields
+    private Stopwatch _lapTimer = new();
+    private TimeSpan _currentLapTime;
+    private TimeSpan? _bestLapTime;
+    private TimeSpan? _lastLapTime;
+    private int _lapCount = 1;
 
     public double Rpm { get => _rpm; private set { _rpm = value; OnChanged(); } }
     public double SpeedMph { get => _speedMph; private set { _speedMph = value; OnChanged(); } }
@@ -35,7 +46,16 @@ public sealed partial class MainViewModel : INotifyPropertyChanged
     public bool IsConnected { get => _isConnected; private set { _isConnected = value; OnChanged(); } }
     public bool IsTransmitting { get => _isTransmitting; private set { _isTransmitting = value; OnChanged(); } }
     public bool IsShowingSettings { get => _isShowingSettings; private set { _isShowingSettings = value; OnChanged(); } }
+    public bool IsShowingScreensaver { get => _isShowingScreensaver; private set { _isShowingScreensaver = value; OnChanged(); } }
     public DateTime LastUpdateTime { get => _lastUpdateTime; private set { _lastUpdateTime = value; OnChanged(); } }
+    public DateTime CurrentTime { get => _currentTime; private set { _currentTime = value; OnChanged(); } }
+    
+    // Lap Timer Properties
+    public TimeSpan CurrentLapTime { get => _currentLapTime; private set { _currentLapTime = value; OnChanged(); } }
+    public TimeSpan? BestLapTime { get => _bestLapTime; private set { _bestLapTime = value; OnChanged(); } }
+    public TimeSpan? LastLapTime { get => _lastLapTime; private set { _lastLapTime = value; OnChanged(); } }
+    public int LapCount { get => _lapCount; private set { _lapCount = value; OnChanged(); } }
+    public ObservableCollection<LapTime> LapTimes { get; } = new();
     
     // Gauge Configuration
     public GaugeConfiguration GaugeConfig 
@@ -106,6 +126,78 @@ public sealed partial class MainViewModel : INotifyPropertyChanged
         IsShowingSettings = false;
     }
 
+    [RelayCommand]
+    public void OpenScreensaver()
+    {
+        IsShowingScreensaver = true;
+    }
+
+    [RelayCommand]
+    public void ExitScreensaver()
+    {
+        IsShowingScreensaver = false;
+    }
+
+    [RelayCommand]
+    public void StartTimer()
+    {
+        _lapTimer.Restart();
+        CurrentLapTime = TimeSpan.Zero;
+    }
+
+    [RelayCommand]
+    public void LapTimer()
+    {
+        if (_lapTimer.IsRunning)
+        {
+            var lapTime = _lapTimer.Elapsed;
+            
+            // Create new lap record
+            var lap = new LapTime
+            {
+                LapNumber = LapCount,
+                Time = lapTime,
+                Timestamp = DateTime.Now
+            };
+            
+            // Check if this is the best lap
+            if (!BestLapTime.HasValue || lapTime < BestLapTime.Value)
+            {
+                // Mark previous best lap as not best
+                foreach (var existingLap in LapTimes)
+                    existingLap.IsBest = false;
+                
+                lap.IsBest = true;
+                BestLapTime = lapTime;
+            }
+            
+            LastLapTime = lapTime;
+            LapTimes.Add(lap);
+            LapCount++;
+            
+            // Restart timer for next lap
+            _lapTimer.Restart();
+            CurrentLapTime = TimeSpan.Zero;
+        }
+    }
+
+    [RelayCommand]
+    public void StopTimer()
+    {
+        _lapTimer.Stop();
+    }
+
+    [RelayCommand]
+    public void ResetTimer()
+    {
+        _lapTimer.Reset();
+        CurrentLapTime = TimeSpan.Zero;
+        BestLapTime = null;
+        LastLapTime = null;
+        LapCount = 1;
+        LapTimes.Clear();
+    }
+
     public MainViewModel(IObdPoller poller, IAgentService agentService)
     {
         _poller = poller;
@@ -172,7 +264,14 @@ public sealed partial class MainViewModel : INotifyPropertyChanged
                 SpeedMph = (t.SpeedKmh ?? 0) * 0.621371;
                 CoolantC = t.CoolantC ?? 0;
                 LastUpdateTime = DateTime.Now;
+                CurrentTime = DateTime.Now;
                 IsConnected = true;
+                
+                // Update lap timer if running
+                if (_lapTimer.IsRunning)
+                {
+                    CurrentLapTime = _lapTimer.Elapsed;
+                }
                 
                 // Update all gauge ViewModels with new telemetry data
                 foreach (var gauge in Gauges)

@@ -35,8 +35,8 @@
               Padding="20,16"
               BorderBrush="rgba(110, 0, 0, 0.81)"
               BorderThickness="0,0,0,1">
-        <Grid ColumnDefinitions="*,Auto,Auto">
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <Grid ColumnDefinitions="*,Auto,*">
+          <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock Text="🚗" FontSize="24" Margin="0,0,12,0" />
             <TextBlock Text="Z33 Telemetry Dashboard" 
                        FontSize="20" 
@@ -45,40 +45,57 @@
                        VerticalAlignment="Center" />
           </StackPanel>
           
-          <!-- Transmission Status Display (Read-only) -->
-          <Border Grid.Column="1" 
-                  Background="{Binding IsTransmitting, Converter={StaticResource TransmissionColorConverter}}"
-                  BorderBrush="#DC2626"
-                  BorderThickness="1"
-                  Padding="12,8"
-                  CornerRadius="6"
-                  Margin="0,0,10,0">
-            <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="📡" FontSize="16" VerticalAlignment="Center" />
-              <TextBlock Text="{Binding IsTransmitting, Converter={StaticResource TransmissionStatusConverter}}" 
-                         FontSize="12" 
-                         FontWeight="SemiBold"
-                         Foreground="White"
-                         VerticalAlignment="Center" />
-            </StackPanel>
-          </Border>
-          
-          <!-- Settings Button -->
-          <Button Grid.Column="2" 
-                  Command="{Binding OpenSettingsCommand}"
+          <!-- Screensaver Button (True Center) -->
+          <Button Grid.Column="1" 
+                  Command="{Binding OpenScreensaverCommand}"
                   Background="Transparent"
                   BorderThickness="0"
-                  Padding="16"
+                  Padding="8"
                   CornerRadius="8"
-                  MinWidth="48"
-                  MinHeight="48"
-                  ToolTip.Tip="Settings">
-            <TextBlock Text="⚙️" 
-                       FontSize="24" 
-                       Foreground="White"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center" />
+                  MinWidth="140"
+                  MinHeight="64"
+                  HorizontalAlignment="Center"
+                  ToolTip.Tip="Screensaver">
+            <Image Source="avares://cartelemetry.desktop/Assets/nismo-seeklogo_whte2.png"
+                   Width="140"
+                   Height="64"
+                   Stretch="Uniform" />
           </Button>
+          
+          <!-- Right Side Controls -->
+          <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="12">
+            <!-- Transmission Status Display (Read-only) -->
+            <Border Background="{Binding IsTransmitting, Converter={StaticResource TransmissionColorConverter}}"
+                    BorderBrush="#DC2626"
+                    BorderThickness="1"
+                    Padding="12,8"
+                    CornerRadius="6">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="📡" FontSize="16" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding IsTransmitting, Converter={StaticResource TransmissionStatusConverter}}" 
+                           FontSize="12" 
+                           FontWeight="SemiBold"
+                           Foreground="White"
+                           VerticalAlignment="Center" />
+              </StackPanel>
+            </Border>
+            
+            <!-- Settings Button -->
+            <Button Command="{Binding OpenSettingsCommand}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Padding="16"
+                    CornerRadius="8"
+                    MinWidth="48"
+                    MinHeight="48"
+                    ToolTip.Tip="Settings">
+              <TextBlock Text="⚙️" 
+                         FontSize="24" 
+                         Foreground="White"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center" />
+            </Button>
+          </StackPanel>
         </Grid>
       </Border>
 
@@ -142,6 +159,11 @@
             </Grid>
           </TabItem>
           
+          <!-- Lap Timer Tab -->
+          <TabItem Header="🏁 Lap Timer">
+            <views:LapTimerView x:Name="LapTimerView" />
+          </TabItem>
+          
           <!-- Diagnostics Tab -->
           <TabItem Header="🔧 Diagnostics">
             <views:DiagnosticsView x:Name="DiagnosticsView" />
@@ -194,5 +216,13 @@
         <ContentControl Grid.Row="1" x:Name="SettingsContent" />
       </Grid>
     </Grid>
+
+
+    <!-- Screen Saver (Full Screen Overlay) -->
+    <Grid x:Name="ScreensaverView" IsVisible="{Binding IsShowingScreensaver}" Background="#0F0F0F">
+      <views:ScreensaverView DataContext="{Binding}" />
+    </Grid>
+
+
   </Grid>
 </Window>
