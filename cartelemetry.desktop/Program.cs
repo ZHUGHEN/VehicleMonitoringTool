@@ -73,6 +73,9 @@ class Program
         var relayConfig = new RelayConfiguration();
         configuration.GetSection("Relay").Bind(relayConfig);
 
+        var openAiConfig = new OpenAiConfiguration();
+        configuration.GetSection("OpenAI").Bind(openAiConfig);
+
         // Step 6: Dependency Injection (DI) Setup
         // This is where we wire up all the services that the app needs
         // Services are created once (Singleton) and injected wherever needed
@@ -99,6 +102,8 @@ class Program
                 return new RelayPublisher(baseUrl, relayConfig.VehicleId, relayConfig.SessionId, relayConfig.IngestKey);
             })
             .AddSingleton<IAgentService, AgentService>()   // Controllable agent service for managing data transmission
+            .AddSingleton(openAiConfig)
+            .AddSingleton<IDiagnosticAiService, OpenAiDiagnosticService>()
             
             // ViewModels: The "VM" in MVVM pattern - these contain the business logic and data for each UI view
             .AddSingleton<MainViewModel>()                 // Main dashboard with gauges, lap timer, screensaver

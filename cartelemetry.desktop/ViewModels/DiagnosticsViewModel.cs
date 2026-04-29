@@ -1,29 +1,39 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CarTelemetry.Core.Obd;
+using CarTelemetry.Desktop.Configuration;
+using CarTelemetry.Desktop.Services;
 
 namespace CarTelemetry.Desktop.ViewModels;
 
 public partial class DiagnosticsViewModel : ObservableObject
 {
-    private readonly IObdAdapter _obd;
     private readonly IDtcService _dtc;
+    private readonly IDiagnosticAiService _diagnosticAi;
+    private readonly OpenAiConfiguration _openAiConfig;
 
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private string _status = "Idle";
+    [ObservableProperty] private string _analysisResult = "";
+    [ObservableProperty] private bool _hasAnalysisResult;
 
     public ObservableCollection<DtcCode> Stored { get; } = new();
     public ObservableCollection<DtcCode> Pending { get; } = new();
     public ObservableCollection<DtcCode> Permanent { get; } = new();
 
-    public DiagnosticsViewModel(IObdAdapter obd, IDtcService dtc)
+    public DiagnosticsViewModel(
+        IDtcService dtc,
+        IDiagnosticAiService diagnosticAi,
+        OpenAiConfiguration openAiConfig)
     {
-        _obd = obd;
         _dtc = dtc;
+        _diagnosticAi = diagnosticAi;
+        _openAiConfig = openAiConfig;
     }
 
     [RelayCommand]
@@ -34,9 +44,7 @@ public partial class DiagnosticsViewModel : ObservableObject
         try
         {
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-            await LoadListAsync(Stored,   DtcClass.Stored,   cts.Token);
-            await LoadListAsync(Pending,  DtcClass.Pending,  cts.Token);
-            await LoadListAsync(Permanent,DtcClass.Permanent,cts.Token);
+            await LoadAllListsAsync(cts.Token);
             Status = "Read complete";
         }
         catch (TaskCanceledException) { Status = "Canceled"; }
@@ -55,11 +63,45 @@ public partial class DiagnosticsViewModel : ObservableObject
             var ok = await _dtc.ClearAsync(cts.Token);
             Status = ok ? "Clear request sent." : "Clear request failed.";
             // After clearing, refresh lists (they may come back empty until faults reoccur)
-            await ReadAllAsync();
+            await LoadAllListsAsync(cts.Token);
         }
         catch (TaskCanceledException) { Status = "Canceled"; }
         catch (System.Exception ex)   { Status = "Error: " + ex.Message; }
         finally { IsBusy = false; }
+    }
+
+    [RelayCommand]
+    private async Task AnalyzeWithChatGptAsync()
+    {
+        if (IsBusy) return;
+        IsBusy = true; Status = "Asking ChatGPT to analyze DTCs...";
+        AnalysisResult = "";
+        HasAnalysisResult = false;
+
+        try
+        {
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+
+            if (Stored.Count + Pending.Count + Permanent.Count == 0)
+            {
+                await LoadAllListsAsync(cts.Token);
+            }
+
+            var codes = Stored.Concat(Pending).Concat(Permanent).ToArray();
+            AnalysisResult = await _diagnosticAi.AnalyzeAsync(_openAiConfig.VehicleModel, codes, cts.Token);
+            HasAnalysisResult = true;
+            Status = "ChatGPT analysis complete";
+        }
+        catch (TaskCanceledException) { Status = "Canceled"; }
+        catch (System.Exception ex)   { Status = "Error: " + ex.Message; }
+        finally { IsBusy = false; }
+    }
+
+    private async Task LoadAllListsAsync(CancellationToken ct)
+    {
+        await LoadListAsync(Stored,    DtcClass.Stored,    ct);
+        await LoadListAsync(Pending,   DtcClass.Pending,   ct);
+        await LoadListAsync(Permanent, DtcClass.Permanent, ct);
     }
 
     private async Task LoadListAsync(ObservableCollection<DtcCode> target, DtcClass kind, CancellationToken ct)
