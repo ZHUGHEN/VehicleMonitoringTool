@@ -52,15 +52,15 @@ public interface IObdPoller
 ///    - IObdAdapter handles hardware communication
 ///    - Telemetry class handles data structure
 /// 
-/// 5. **Configurable Behavior**: Polling period can be customized
-///    - Default 10 Hz (100ms) balances responsiveness vs. performance
-///    - Can be adjusted based on use case (racing = faster, economy = slower)
+/// 5. **Configurable Behavior**: Delay between requests can be customized
+///    - Default 250ms delay is tuned for ISO 9141/K-line ECUs
+///    - Can be adjusted based on the vehicle protocol and adapter behavior
 /// </summary>
 public sealed class ObdPoller : IObdPoller
 {
     // ===== DEPENDENCY INJECTION - CONSTRUCTOR DEPENDENCIES =====
     private readonly IObdAdapter _obd;     // The hardware interface (injected dependency)
-    private readonly TimeSpan _period;     // How often to poll for new data
+    private readonly TimeSpan _period;     // Delay between individual OBD requests
 
     /// <summary>
     /// Constructor demonstrates **Dependency Injection** and **Configuration Pattern**.
@@ -74,14 +74,14 @@ public sealed class ObdPoller : IObdPoller
     /// CONFIGURATION PATTERN:
     /// - Optional period parameter with sensible default
     /// - Allows customization without breaking existing code
-    /// - Default 10 Hz (100ms) is good balance of responsiveness vs. CPU usage
+    /// - Default 250ms delay avoids flooding older ISO 9141/K-line ECUs
     /// </summary>
     /// <param name="obd">OBD adapter interface (injected by DI container)</param>
-    /// <param name="period">Optional polling interval (defaults to 100ms = 10 Hz)</param>
+    /// <param name="period">Optional delay between requests (defaults to 250ms for ISO 9141/K-line)</param>
     public ObdPoller(IObdAdapter obd, TimeSpan? period = null)
     {
         _obd = obd;
-        _period = period ?? TimeSpan.FromMilliseconds(100); // Default 10 Hz polling rate
+        _period = period ?? TimeSpan.FromMilliseconds(250);
     }
 
     /// <summary>
@@ -119,31 +119,49 @@ public sealed class ObdPoller : IObdPoller
         // Connect to the OBD adapter before starting to poll
         // This might involve opening serial port, establishing Bluetooth connection, etc.
         await _obd.ConnectAsync(ct);
-        
+
+        double? rpm = null;
+        double? speedKmh = null;
+        double? coolantC = null;
+        var requestIndex = 0;
+
         // ===== CONTINUOUS POLLING LOOP =====
         // This loop runs until cancellation is requested (app shutdown, user stops, etc.)
         while (!ct.IsCancellationRequested)
         {
-            // ===== COLLECT TELEMETRY DATA =====
-            // Query all the OBD parameters we're interested in
-            // Each call is async because hardware communication takes time
-            var t = new Telemetry(
-                await _obd.ReadRpmAsync(ct),        // Engine RPM
-                await _obd.ReadSpeedKmhAsync(ct),   // Vehicle speed in km/h
-                await _obd.ReadCoolantCAsync(ct),   // Coolant temperature in Celsius
-                DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()  // Timestamp when data was collected
-            );
-            
+            // ISO 9141/K-line is request/response and slow compared to CAN. Keep
+            // high-value PIDs fresh, and ask coolant rarely because it changes slowly.
+            switch (requestIndex % 8)
+            {
+                case 1:
+                case 3:
+                case 5:
+                    speedKmh = await _obd.ReadSpeedKmhAsync(ct);
+                    break;
+                case 7:
+                    coolantC = await _obd.ReadCoolantCAsync(ct);
+                    break;
+                default:
+                    rpm = await _obd.ReadRpmAsync(ct);
+                    break;
+            }
+
+            requestIndex++;
+
             // ===== YIELD RETURN - ASYNC ENUMERABLE MAGIC =====
             // This returns the telemetry data to the consumer immediately
             // The method pauses here until the consumer is ready for the next item
             // This provides natural backpressure - if consumer is slow, we slow down
-            yield return t;
+            yield return new Telemetry(
+                rpm,
+                speedKmh,
+                coolantC,
+                DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+            );
             
             // ===== RATE LIMITING =====
-            // Wait for the specified period before collecting next reading
-            // This controls the polling frequency (default 10 Hz = 100ms delay)
-            // Prevents overwhelming the OBD adapter or consuming too much CPU
+            // Wait before the next single request. The request itself also takes
+            // bus time, so real update rate naturally follows the ISO 9141 link.
             await Task.Delay(_period, ct);
         }
         

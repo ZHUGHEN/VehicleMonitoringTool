@@ -14,7 +14,7 @@ public sealed class Elm327Adapter : IObdAdapter
 
     // ELM expects \r and returns '>' prompt
     private const string Prompt = ">";
-    private const int DefaultTimeoutMs = 700;
+    private const int DefaultTimeoutMs = 1500;
 
     public Elm327Adapter(string portName, int baud = 38400)
     {
@@ -34,13 +34,16 @@ public sealed class Elm327Adapter : IObdAdapter
 
         _port.Open();
 
-        // Basic, short init; each step is best-effort and time-bounded
+        // Z33-era Nissan ECUs use ISO 9141-2/K-line. Forcing protocol 3 avoids
+        // slow or unreliable auto-protocol negotiation on many ELM327 clones.
         await SendAsync("ATZ", ct);    // reset
         await SendAsync("ATE0", ct);   // echo off
         await SendAsync("ATL0", ct);   // linefeeds off
-        await SendAsync("ATS0", ct);   // spaces off
+        await SendAsync("ATS1", ct);   // spaces on, easier to inspect in tester logs
         await SendAsync("ATH0", ct);   // headers off
-        await SendAsync("ATSP0", ct);  // auto protocol
+        await SendAsync("ATAT1", ct);  // adaptive timing on
+        await SendAsync("ATST96", ct); // ~600 ms OBD response timeout inside ELM
+        await SendAsync("ATSP3", ct);  // ISO 9141-2
     }
 
     public Task<string> SendRawAsync(string command, CancellationToken ct)

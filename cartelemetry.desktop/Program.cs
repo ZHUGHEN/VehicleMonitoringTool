@@ -76,6 +76,9 @@ class Program
         var openAiConfig = new OpenAiConfiguration();
         configuration.GetSection("OpenAI").Bind(openAiConfig);
 
+        var obdConfig = new ObdConfiguration();
+        configuration.GetSection("Obd").Bind(obdConfig);
+
         // Step 6: Dependency Injection (DI) Setup
         // This is where we wire up all the services that the app needs
         // Services are created once (Singleton) and injected wherever needed
@@ -83,9 +86,18 @@ class Program
             // Logging: Available throughout the app for debugging and monitoring
             .AddLogging(builder => builder.AddConsole().AddConfiguration(configuration.GetSection("Logging")))
             
-            // OBD-II Hardware Interface: Currently using MockObdAdapter for simulation
-            // In production, this would be Elm327SerialAdapter for real ELM327 hardware
-            .AddSingleton<IObdAdapter, MockObdAdapter>()   // swap to Elm327SerialAdapter later
+            // OBD-II Hardware Interface: uses mock data unless an ELM327 port is configured
+            .AddSingleton<IObdAdapter>(_ =>
+            {
+                var envPortName = Environment.GetEnvironmentVariable("OBD_PORT");
+                var portName = envPortName ?? obdConfig.PortName;
+                var useMock = string.IsNullOrWhiteSpace(envPortName)
+                    && (obdConfig.UseMock || string.IsNullOrWhiteSpace(portName));
+
+                return useMock
+                    ? new MockObdAdapter()
+                    : new Elm327Adapter(portName!, obdConfig.Baud);
+            })
             
             // OBD Polling Service: Continuously requests data from the OBD adapter
             .AddSingleton<IObdPoller, ObdPoller>()

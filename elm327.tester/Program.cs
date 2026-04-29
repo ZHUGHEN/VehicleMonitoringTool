@@ -58,6 +58,8 @@ class Program
         Console.WriteLine("   ATZ     - Reset adapter");
         Console.WriteLine("   ATE0    - Turn echo off");
         Console.WriteLine("   ATI     - Adapter info");
+        Console.WriteLine("   ATSP3   - Force ISO 9141-2 protocol");
+        Console.WriteLine("   ATDP    - Show active protocol");
         Console.WriteLine("   0100    - Supported PIDs");
         Console.WriteLine("   010C    - Engine RPM");
         Console.WriteLine("   010D    - Vehicle speed");
