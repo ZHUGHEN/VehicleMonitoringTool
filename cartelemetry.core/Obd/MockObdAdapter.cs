@@ -33,7 +33,7 @@ public sealed class MockObdAdapter : IObdAdapter
         return Task.FromResult(command switch
         {
             // Stored DTCs - simulate some common engine codes
-            "03" => "43 01 33 01 30 02 10 03 00", // P0133 (O2 Sensor), P0130 (O2 Sensor), P0210 (Injector Circuit), P0300 (Multiple/Random Misfires)
+            "03" => "43 01 33 01 30 02 03 03 00", // P0133 (O2 Sensor), P0130 (O2 Sensor), P0210 (Injector Circuit), P0300 (Multiple/Random Misfires)
             
             // Pending DTCs - simulate intermittent issues  
             "07" => "47 04 20 00 00", // P0420 (Catalyst System Efficiency) 
