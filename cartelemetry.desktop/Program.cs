@@ -115,6 +115,7 @@ class Program
             })
             .AddSingleton<IAgentService, AgentService>()   // Controllable agent service for managing data transmission
             .AddSingleton(openAiConfig)
+            .AddSingleton<IDiagnosticAnalysisCacheService, JsonDiagnosticAnalysisCacheService>()
             .AddSingleton<IDiagnosticAiService, OpenAiDiagnosticService>()
             
             // ViewModels: The "VM" in MVVM pattern - these contain the business logic and data for each UI view

@@ -21,27 +21,36 @@ public interface IDiagnosticAiService
 public sealed class OpenAiDiagnosticService : IDiagnosticAiService, IDisposable
 {
     private readonly OpenAiConfiguration _config;
+    private readonly IDiagnosticAnalysisCacheService _cache;
     private readonly HttpClient _http = new()
     {
         BaseAddress = new Uri("https://api.openai.com")
     };
 
-    public OpenAiDiagnosticService(OpenAiConfiguration config)
+    public OpenAiDiagnosticService(OpenAiConfiguration config, IDiagnosticAnalysisCacheService cache)
     {
         _config = config;
+        _cache = cache;
     }
 
     public async Task<string> AnalyzeAsync(string vehicleModel, IReadOnlyCollection<DtcCode> codes, CancellationToken ct)
     {
+        if (codes.Count == 0)
+        {
+            return "No diagnostic trouble codes were found to analyze.";
+        }
+
+        var cacheKey = _cache.CreateKey(_config.Model, vehicleModel, codes);
+        var cachedAnalysis = await _cache.GetAsync(cacheKey, ct);
+        if (!string.IsNullOrWhiteSpace(cachedAnalysis))
+        {
+            return cachedAnalysis;
+        }
+
         var apiKey = GetApiKey();
         if (string.IsNullOrWhiteSpace(apiKey))
         {
             return "OpenAI API key is not configured. Set the OPENAI_API_KEY environment variable, then restart the app.";
-        }
-
-        if (codes.Count == 0)
-        {
-            return "No diagnostic trouble codes were found to analyze.";
         }
 
         using var request = new HttpRequestMessage(HttpMethod.Post, "/v1/responses")
@@ -69,7 +78,9 @@ public sealed class OpenAiDiagnosticService : IDiagnosticAiService, IDisposable
             return $"ChatGPT analysis failed ({(int)response.StatusCode} {response.ReasonPhrase}): {body}";
         }
 
-        return ExtractOutputText(body);
+        var analysis = ExtractOutputText(body);
+        await _cache.SetAsync(cacheKey, analysis, ct);
+        return analysis;
     }
 
     public void Dispose() => _http.Dispose();

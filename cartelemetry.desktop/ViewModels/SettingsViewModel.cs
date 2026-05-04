@@ -32,11 +32,13 @@ public record GaugeOption(GaugeType Type, string Icon, string DisplayName)
 public partial class SettingsViewModel : ObservableObject
 {
     private readonly IAgentService _agentService;
+    private readonly IDiagnosticAnalysisCacheService _diagnosticAnalysisCache;
     
     [ObservableProperty] private string _baseUrl = "http://localhost:5000";
     [ObservableProperty] private string _vehicleId = "Z33-01";
     [ObservableProperty] private string _sessionId = "dev-local";
     [ObservableProperty] private string _ingestKey = "super-secret-123";
+    [ObservableProperty] private string _diagnosticCacheStatus = "";
     
     [ObservableProperty] private bool _isModified = false;
     [ObservableProperty] private bool _isTransmitting = false;
@@ -61,9 +63,12 @@ public partial class SettingsViewModel : ObservableObject
         new GaugeOption(GaugeType.FuelTrim, "🔧", "Fuel Trim")
     };
 
-    public SettingsViewModel(IAgentService agentService)
+    public SettingsViewModel(
+        IAgentService agentService,
+        IDiagnosticAnalysisCacheService diagnosticAnalysisCache)
     {
         _agentService = agentService;
+        _diagnosticAnalysisCache = diagnosticAnalysisCache;
         
         // Set default selections (will be overridden by LoadGaugeConfigurationAsync)
         _gaugeSlot1 = AvailableGauges.First(g => g.Type == GaugeType.EngineRpm);
@@ -82,7 +87,9 @@ public partial class SettingsViewModel : ObservableObject
         // Monitor for changes
         PropertyChanged += (s, e) =>
         {
-            if (e.PropertyName != nameof(IsModified) && e.PropertyName != nameof(IsTransmitting))
+            if (e.PropertyName != nameof(IsModified) &&
+                e.PropertyName != nameof(IsTransmitting) &&
+                e.PropertyName != nameof(DiagnosticCacheStatus))
             {
                 IsModified = true;
             }
@@ -122,6 +129,20 @@ public partial class SettingsViewModel : ObservableObject
         VehicleId = "Z33-01";
         SessionId = "production";
         IngestKey = "your-production-key";
+    }
+
+    [RelayCommand]
+    private async Task ClearDiagnosticCacheAsync()
+    {
+        try
+        {
+            await _diagnosticAnalysisCache.ClearAsync(default);
+            DiagnosticCacheStatus = "Diagnostic AI cache cleared.";
+        }
+        catch (Exception ex)
+        {
+            DiagnosticCacheStatus = $"Failed to clear diagnostic AI cache: {ex.Message}";
+        }
     }
 
     [RelayCommand]

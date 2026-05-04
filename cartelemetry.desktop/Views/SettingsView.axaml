@@ -233,6 +233,24 @@
                     HorizontalAlignment="Stretch"
                     FontSize="16"
                     FontWeight="SemiBold" />
+
+            <Button Content="Clear Diagnostic AI Cache"
+                    Command="{Binding ClearDiagnosticCacheCommand}"
+                    Background="#FEE2E2"
+                    BorderBrush="#EF4444"
+                    BorderThickness="2"
+                    Foreground="#991B1B"
+                    Padding="24,16"
+                    CornerRadius="12"
+                    MinHeight="60"
+                    HorizontalAlignment="Stretch"
+                    FontSize="16"
+                    FontWeight="SemiBold" />
+
+            <TextBlock Text="{Binding DiagnosticCacheStatus}"
+                       FontSize="14"
+                       Foreground="Gray"
+                       TextWrapping="Wrap" />
             
             <Button Content="💾 Save All Settings" 
                     Command="{Binding SaveCommand}"
