@@ -9,6 +9,8 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Avalonia.Threading;
+
 using CarTelemetry.Core;
 using CarTelemetry.Core.Obd;
 
@@ -48,6 +50,10 @@ public sealed partial class MainViewModel : INotifyPropertyChanged
     private GaugeConfiguration _gaugeConfig = GaugeConfiguration.CreateDefault();
 
     private Stopwatch _lapTimer = new();
+    private readonly DispatcherTimer _lapDisplayTimer = new()
+    {
+        Interval = TimeSpan.FromMilliseconds(16)
+    };
     private TimeSpan _currentLapTime;
     private TimeSpan? _bestLapTime;
     private TimeSpan? _lastLapTime;
@@ -167,6 +173,7 @@ public sealed partial class MainViewModel : INotifyPropertyChanged
     {
         _lapTimer.Restart();
         CurrentLapTime = TimeSpan.Zero;
+        _lapDisplayTimer.Start();
     }
 
     [RelayCommand]
@@ -199,6 +206,7 @@ public sealed partial class MainViewModel : INotifyPropertyChanged
             
             _lapTimer.Restart();
             CurrentLapTime = TimeSpan.Zero;
+            _lapDisplayTimer.Start();
         }
     }
 
@@ -206,12 +214,15 @@ public sealed partial class MainViewModel : INotifyPropertyChanged
     public void StopTimer()
     {
         _lapTimer.Stop();
+        _lapDisplayTimer.Stop();
+        CurrentLapTime = _lapTimer.Elapsed;
     }
 
     [RelayCommand]
     public void ResetTimer()
     {
         _lapTimer.Reset();
+        _lapDisplayTimer.Stop();
         CurrentLapTime = TimeSpan.Zero;
         BestLapTime = null;
         LastLapTime = null;
@@ -230,6 +241,15 @@ public sealed partial class MainViewModel : INotifyPropertyChanged
         };
         
         UpdateGaugeViewModels();
+
+        // Refresh lap display independently from telemetry so milliseconds move smoothly.
+        _lapDisplayTimer.Tick += (_, _) =>
+        {
+            if (_lapTimer.IsRunning)
+            {
+                CurrentLapTime = _lapTimer.Elapsed;
+            }
+        };
         
         // Configuration load and telemetry streaming are independent startup tasks.
         _ = Task.Run(LoadGaugeConfigurationAsync);
@@ -291,11 +311,6 @@ public sealed partial class MainViewModel : INotifyPropertyChanged
                 LastUpdateTime = DateTime.Now;
                 CurrentTime = DateTime.Now;
                 IsConnected = true;
-                
-                if (_lapTimer.IsRunning)
-                {
-                    CurrentLapTime = _lapTimer.Elapsed;
-                }
                 
                 foreach (var gauge in Gauges)
                 {
