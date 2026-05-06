@@ -5,13 +5,10 @@ using System.Text;
 namespace CarTelemetry.Desktop.Utils;
 
 /// <summary>
-/// Utility for generating secure ingest keys
+/// Helper methods for generating ingest keys used by telemetry relay clients.
 /// </summary>
 public static class KeyGenerator
 {
-    /// <summary>
-    /// Generate a secure random ingest key
-    /// </summary>
     public static string GenerateIngestKey(int length = 32)
     {
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -29,19 +26,13 @@ public static class KeyGenerator
         return new string(random);
     }
     
-    /// <summary>
-    /// Generate a vehicle-specific ingest key based on VIN or vehicle ID
-    /// </summary>
     public static string GenerateVehicleKey(string vehicleId, string secret = "Z33-Racing-2025")
     {
         using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
         var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(vehicleId));
-        return Convert.ToBase64String(hash)[..24]; // First 24 characters
+        return Convert.ToBase64String(hash)[..24];
     }
     
-    /// <summary>
-    /// Generate a timestamp-based rotating key (changes daily)
-    /// </summary>
     public static string GenerateRotatingKey(string baseSecret = "Z33-Daily-Key")
     {
         var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
@@ -50,3 +41,4 @@ public static class KeyGenerator
         return Convert.ToBase64String(hash)[..32];
     }
 }
+

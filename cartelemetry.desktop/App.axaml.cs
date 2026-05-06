@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CarTelemetry.Desktop;
 
+/// <summary>
+/// Avalonia application bootstrapper that resolves the main window from the service container.
+/// </summary>
 public partial class App : Application
 {
     public static IServiceProvider Services { get; set; } = default!;
@@ -18,7 +21,6 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // ✅ Resolve the VM from the DI container we created in Program.cs
             var vm = Services.GetRequiredService<MainViewModel>();
             desktop.MainWindow = new MainWindow { DataContext = vm };
         }
@@ -26,3 +28,4 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 }
+

@@ -13,7 +13,6 @@ class Program
         Console.WriteLine("================================");
         Console.WriteLine();
 
-        // Get COM port from user
         Console.Write("Enter COM port (e.g., COM3): ");
         var comPort = Console.ReadLine();
         
@@ -23,7 +22,6 @@ class Program
             return;
         }
 
-        // Create and connect to adapter
         Console.WriteLine($"🔌 Connecting to {comPort}...");
         
         try
@@ -33,7 +31,6 @@ class Program
             Console.WriteLine("✅ Connected successfully!");
             Console.WriteLine();
 
-            // Run interactive command loop
             await RunCommandLoop(adapter);
         }
         catch (Exception ex)
@@ -91,7 +88,6 @@ class Program
                 var response = await adapter.SendRawAsync(command, CancellationToken.None);
                 Console.WriteLine($"✅ Response: {response}");
                 
-                // Try to interpret common responses
                 InterpretResponse(command, response);
             }
             catch (Exception ex)
@@ -110,24 +106,24 @@ class Program
 
         switch (cmd)
         {
-            case "010C": // RPM
+            case "010C":
                 if (TryParseRpm(resp, out var rpm))
                     Console.WriteLine($"   🔧 Engine RPM: {rpm:F0}");
                 break;
                 
-            case "010D": // Speed
+            case "010D":
                 if (TryParseSpeed(resp, out var speed))
                     Console.WriteLine($"   🏃 Vehicle Speed: {speed} km/h ({speed * 0.621371:F1} mph)");
                 break;
                 
-            case "0105": // Coolant temp
+            case "0105":
                 if (TryParseCoolantTemp(resp, out var temp))
                     Console.WriteLine($"   🌡️ Coolant Temperature: {temp}°C ({temp * 9/5 + 32:F1}°F)");
                 break;
                 
             case "03":
             case "07": 
-            case "0A": // DTC commands
+            case "0A":
                 if (resp.Contains("43") || resp.Contains("47") || resp.Contains("4A"))
                     Console.WriteLine($"   🔍 DTCs found in response - use your main app to decode!");
                 else if (resp.Contains("NO DATA"))
@@ -139,7 +135,6 @@ class Program
     static bool TryParseRpm(string response, out double rpm)
     {
         rpm = 0;
-        // Expected format: "41 0C XX XX" where XXXX is RPM * 4
         var parts = response.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length >= 4 && parts[0] == "41" && parts[1] == "0C")
         {
@@ -156,7 +151,6 @@ class Program
     static bool TryParseSpeed(string response, out int speed)
     {
         speed = 0;
-        // Expected format: "41 0D XX" where XX is speed in km/h
         var parts = response.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length >= 3 && parts[0] == "41" && parts[1] == "0D")
         {
@@ -172,7 +166,6 @@ class Program
     static bool TryParseCoolantTemp(string response, out int temp)
     {
         temp = 0;
-        // Expected format: "41 05 XX" where XX is temp + 40
         var parts = response.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length >= 3 && parts[0] == "41" && parts[1] == "05")
         {
@@ -185,3 +178,4 @@ class Program
         return false;
     }
 }
+

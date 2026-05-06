@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace CarTelemetry.WebApp.Models;
 
-// Envelope schema for telemetry data
+/// <summary>
+/// Versioned SignalR envelope shared by telemetry producers and viewers.
+/// </summary>
 public record StreamEnvelope(
     string type,
     string vehicleId,
@@ -11,19 +13,14 @@ public record StreamEnvelope(
     long   ts,
     object payload);
 
-// Telemetry payload structure
 public record TelemetryPayload(double? rpm, double? speedKmh, double? coolantC);
 
-// Future: GPS tracking payload for racing lines
 public record GpsPayload(double lat, double lng, double altitude, double heading, double speed);
 
-// Future: Motion sensor payload for G-forces
 public record MotionPayload(double accelX, double accelY, double accelZ, double gyroX, double gyroY, double gyroZ);
 
-// Future: Engine diagnostics payload
 public record EnginePayload(double throttlePosition, double fuelLevel, double oilPressure, double intakeAirTemp);
 
-// SignalR hub for real-time telemetry streaming
 public class TelemetryHub : Hub
 {
     public override Task OnConnectedAsync()
@@ -43,3 +40,4 @@ public class TelemetryHub : Hub
         return base.OnDisconnectedAsync(exception);
     }
 }
+

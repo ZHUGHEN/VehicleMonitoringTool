@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -13,6 +13,9 @@ using CarTelemetry.Desktop.Configuration;
 
 namespace CarTelemetry.Desktop.Services;
 
+/// <summary>
+/// Produces a concise diagnostic analysis for the current vehicle and DTC set.
+/// </summary>
 public interface IDiagnosticAiService
 {
     Task<string> AnalyzeAsync(string vehicleModel, IReadOnlyCollection<DtcCode> codes, CancellationToken ct);
@@ -53,6 +56,7 @@ public sealed class OpenAiDiagnosticService : IDiagnosticAiService, IDisposable
             return "OpenAI API key is not configured. Set the OPENAI_API_KEY environment variable, then restart the app.";
         }
 
+        // Responses API output is constrained to a stable format so the UI can display it directly.
         using var request = new HttpRequestMessage(HttpMethod.Post, "/v1/responses")
         {
             Content = JsonContent.Create(new
@@ -150,6 +154,7 @@ Rules:
         using var document = JsonDocument.Parse(json);
         var root = document.RootElement;
 
+        // Newer Responses API responses may include a flattened output_text convenience field.
         if (root.TryGetProperty("output_text", out var outputText) && outputText.ValueKind == JsonValueKind.String)
         {
             return outputText.GetString() ?? string.Empty;
@@ -182,3 +187,5 @@ Rules:
             : sb.ToString().Trim();
     }
 }
+
+

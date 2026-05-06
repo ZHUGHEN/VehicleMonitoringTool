@@ -8,20 +8,20 @@
              x:Class="CarTelemetry.Desktop.Views.SettingsView"
              x:DataType="vm:SettingsViewModel">
 
-  <!-- UserControl Resources -->
   <UserControl.Resources>
     <converters:TransmissionStatusConverter x:Key="TransmissionStatusConverter" />
     <converters:TransmissionColorConverter x:Key="TransmissionColorConverter" />
   </UserControl.Resources>
 
+  <!-- Settings form: organized as stacked cards for system, relay, display, and actions. -->
   <ScrollViewer AllowAutoHide="True"
                 IsScrollChainingEnabled="True">
     <StackPanel Margin="24" Spacing="24">
-      
-      <!-- Header -->
+
+      <!-- Page title and short context. -->
       <StackPanel Spacing="8">
-        <TextBlock Text="⚙️ Settings" 
-                   FontSize="32" 
+        <TextBlock Text="Settings"
+                   FontSize="32"
                    FontWeight="Bold"
                    Margin="0,0,0,8" />
         <TextBlock Text="Configure your telemetry system"
@@ -29,49 +29,50 @@
                    Foreground="Gray" />
       </StackPanel>
 
-      <!-- System Information (Read-only) -->
-      <Border Background="rgba(55, 55, 55, 1)" 
-              BorderBrush="#E9ECEF" 
-              BorderThickness="2" 
-              CornerRadius="12" 
+      <!-- System information: read-only relay identity values. -->
+      <Border Background="rgba(55, 55, 55, 1)"
+              BorderBrush="#E9ECEF"
+              BorderThickness="2"
+              CornerRadius="12"
               Padding="24">
         <StackPanel Spacing="20">
-          <TextBlock Text="🔧 System Information" 
-                     FontSize="20" 
+          <TextBlock Text="System Information"
+                     FontSize="20"
                      FontWeight="SemiBold" />
-          
+
           <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="120,*">
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Base URL:" FontWeight="Medium" FontSize="16" Margin="0,0,16,16" />
             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding BaseUrl}" FontSize="16" Margin="0,0,0,16" />
-            
+
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Vehicle ID:" FontWeight="Medium" FontSize="16" Margin="0,0,16,16" />
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding VehicleId}" FontSize="16" Margin="0,0,0,16" />
-            
+
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Session ID:" FontWeight="Medium" FontSize="16" Margin="0,0,16,16" />
             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SessionId}" FontSize="16" Margin="0,0,0,16" />
-            
+
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Status:" FontWeight="Medium" FontSize="16" Margin="0,0,16,0" />
             <TextBlock Grid.Row="3" Grid.Column="1" Text="Connected" Foreground="Green" FontSize="16" />
           </Grid>
         </StackPanel>
       </Border>
 
-      <!-- Transmission Control -->
-      <Border Background="rgba(55, 55, 55, 1)" 
-              BorderBrush="#F59E0B" 
-              BorderThickness="2" 
-              CornerRadius="12" 
+      <!-- Transmission controls: start or stop publishing telemetry to the relay. -->
+      <Border Background="rgba(55, 55, 55, 1)"
+              BorderBrush="#F59E0B"
+              BorderThickness="2"
+              CornerRadius="12"
               Padding="24">
         <StackPanel Spacing="20">
-          <TextBlock Text="� Transmission Control" 
-                     FontSize="20" 
+          <TextBlock Text="⚡ Transmission Control"
+                     FontSize="20"
                      FontWeight="SemiBold" />
-          
+
           <StackPanel Spacing="16">
             <TextBlock Text="Control telemetry data transmission to the relay service"
                        FontSize="14"
                        Foreground="Gray" />
-            
+
+            <!-- Toggle relay transmission button. -->
             <Button Command="{Binding ToggleTransmissionCommand}"
                     Background="{Binding IsTransmitting, Converter={StaticResource TransmissionColorConverter}}"
                     BorderBrush="#DC2626"
@@ -82,8 +83,8 @@
                     HorizontalAlignment="Stretch">
               <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
                 <TextBlock Text="📡" FontSize="24" VerticalAlignment="Center" />
-                <TextBlock Text="{Binding IsTransmitting, Converter={StaticResource TransmissionStatusConverter}}" 
-                           FontSize="18" 
+                <TextBlock Text="{Binding IsTransmitting, Converter={StaticResource TransmissionStatusConverter}}"
+                           FontSize="18"
                            FontWeight="SemiBold"
                            Foreground="White"
                            VerticalAlignment="Center" />
@@ -93,24 +94,23 @@
         </StackPanel>
       </Border>
 
-      <!-- Display Configuration -->
-      <Border Background="rgba(55, 55, 55, 1)" 
-              BorderBrush="#3B82F6" 
-              BorderThickness="2" 
-              CornerRadius="12" 
+      <!-- Display configuration: six gauge slots shown on the telemetry dashboard. -->
+      <Border Background="rgba(55, 55, 55, 1)"
+              BorderBrush="#3B82F6"
+              BorderThickness="2"
+              CornerRadius="12"
               Padding="24">
         <StackPanel Spacing="20">
-          <TextBlock Text="� Display Configuration" 
-                     FontSize="20" 
+          <TextBlock Text="📊 Display Configuration"
+                     FontSize="20"
                      FontWeight="SemiBold" />
-          
+
           <TextBlock Text="Choose which gauges to display in each of the 6 gauge slots"
                      FontSize="14"
                      Foreground="Gray" />
-          
-          <!-- 6 Gauge Selection Dropdowns -->
+
           <StackPanel Spacing="16">
-            <!-- Gauge Slot 1 -->
+            <!-- Gauge slot 1 selector. -->
             <StackPanel>
               <TextBlock Text="Gauge Slot 1:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
               <ComboBox ItemsSource="{Binding AvailableGauges}"
@@ -125,8 +125,8 @@
                 </ComboBox.ItemTemplate>
               </ComboBox>
             </StackPanel>
-            
-            <!-- Gauge Slot 2 -->
+
+            <!-- Gauge slot 2 selector. -->
             <StackPanel>
               <TextBlock Text="Gauge Slot 2:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
               <ComboBox ItemsSource="{Binding AvailableGauges}"
@@ -141,8 +141,8 @@
                 </ComboBox.ItemTemplate>
               </ComboBox>
             </StackPanel>
-            
-            <!-- Gauge Slot 3 -->
+
+            <!-- Gauge slot 3 selector. -->
             <StackPanel>
               <TextBlock Text="Gauge Slot 3:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
               <ComboBox ItemsSource="{Binding AvailableGauges}"
@@ -157,8 +157,8 @@
                 </ComboBox.ItemTemplate>
               </ComboBox>
             </StackPanel>
-            
-            <!-- Gauge Slot 4 -->
+
+            <!-- Gauge slot 4 selector. -->
             <StackPanel>
               <TextBlock Text="Gauge Slot 4:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
               <ComboBox ItemsSource="{Binding AvailableGauges}"
@@ -173,8 +173,8 @@
                 </ComboBox.ItemTemplate>
               </ComboBox>
             </StackPanel>
-            
-            <!-- Gauge Slot 5 -->
+
+            <!-- Gauge slot 5 selector. -->
             <StackPanel>
               <TextBlock Text="Gauge Slot 5:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
               <ComboBox ItemsSource="{Binding AvailableGauges}"
@@ -189,8 +189,8 @@
                 </ComboBox.ItemTemplate>
               </ComboBox>
             </StackPanel>
-            
-            <!-- Gauge Slot 6 -->
+
+            <!-- Gauge slot 6 selector. -->
             <StackPanel>
               <TextBlock Text="Gauge Slot 6:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
               <ComboBox ItemsSource="{Binding AvailableGauges}"
@@ -209,19 +209,20 @@
         </StackPanel>
       </Border>
 
-      <!-- Quick Actions -->
-      <Border Background="rgba(55, 55, 55, 1)" 
-              BorderBrush="#EF4444" 
-              BorderThickness="2" 
-              CornerRadius="12" 
+      <!-- Quick actions: reset layout, clear cached AI results, and save settings. -->
+      <Border Background="rgba(55, 55, 55, 1)"
+              BorderBrush="#EF4444"
+              BorderThickness="2"
+              CornerRadius="12"
               Padding="24">
         <StackPanel Spacing="20">
-          <TextBlock Text="⚡ Quick Actions" 
-                     FontSize="20" 
+          <TextBlock Text="Quick Actions"
+                     FontSize="20"
                      FontWeight="SemiBold" />
-          
+
           <StackPanel Spacing="16">
-            <Button Content="� Reset to Defaults" 
+            <!-- Reset defaults button. -->
+            <Button Content="🔄 Reset to Defaults"
                     Command="{Binding LoadDefaultsCommand}"
                     Background="#EBF8FF"
                     BorderBrush="#3B82F6"
@@ -234,6 +235,7 @@
                     FontSize="16"
                     FontWeight="SemiBold" />
 
+            <!-- Clear diagnostic analysis cache button. -->
             <Button Content="Clear Diagnostic AI Cache"
                     Command="{Binding ClearDiagnosticCacheCommand}"
                     Background="#FEE2E2"
@@ -251,8 +253,9 @@
                        FontSize="14"
                        Foreground="Gray"
                        TextWrapping="Wrap" />
-            
-            <Button Content="💾 Save All Settings" 
+
+            <!-- Save all settings button. -->
+            <Button Content="💾 Save All Settings"
                     Command="{Binding SaveCommand}"
                     Background="#10B981"
                     BorderBrush="#059669"
@@ -268,7 +271,7 @@
           </StackPanel>
         </StackPanel>
       </Border>
-      
+
     </StackPanel>
   </ScrollViewer>
 </UserControl>

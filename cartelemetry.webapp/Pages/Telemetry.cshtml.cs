@@ -16,3 +16,4 @@ public class TelemetryModel : PageModel
         _logger.LogInformation("Telemetry dashboard accessed");
     }
 }
+

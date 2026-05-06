@@ -11,6 +11,9 @@ using CarTelemetry.Desktop.Services;
 
 namespace CarTelemetry.Desktop.ViewModels;
 
+/// <summary>
+/// Presents DTC reads, clearing operations, and optional AI-assisted diagnostics.
+/// </summary>
 public partial class DiagnosticsViewModel : ObservableObject
 {
     private readonly IDtcService _dtc;
@@ -62,7 +65,6 @@ public partial class DiagnosticsViewModel : ObservableObject
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
             var ok = await _dtc.ClearAsync(cts.Token);
             Status = ok ? "Clear request sent." : "Clear request failed.";
-            // After clearing, refresh lists (they may come back empty until faults reoccur)
             await LoadAllListsAsync(cts.Token);
         }
         catch (TaskCanceledException) { Status = "Canceled"; }
@@ -111,3 +113,4 @@ public partial class DiagnosticsViewModel : ObservableObject
         foreach (var item in list) target.Add(item);
     }
 }
+

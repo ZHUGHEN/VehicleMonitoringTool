@@ -5,6 +5,9 @@ using System.ComponentModel;
 
 namespace CarTelemetry.Desktop.Views;
 
+/// <summary>
+/// Main Avalonia window that wires dashboard, settings, and diagnostics views.
+/// </summary>
 public partial class MainWindow : Window
 {
     private MainViewModel? _mainViewModel;
@@ -17,20 +20,19 @@ public partial class MainWindow : Window
         
         this.Loaded += (s, e) =>
         {
-            // Set up DataContexts
+            // Resolve view models after Avalonia has created named controls in the visual tree.
             _mainViewModel = App.Services.GetRequiredService<MainViewModel>();
             _settingsViewModel = App.Services.GetRequiredService<SettingsViewModel>();
             this.DataContext = _mainViewModel;
             
+            // Diagnostics owns a separate ViewModel, so assign it explicitly after the tab is created.
             if (this.FindControl<DiagnosticsView>("DiagnosticsView") is DiagnosticsView diagnosticsView)
             {
                 diagnosticsView.DataContext = App.Services.GetRequiredService<DiagnosticsViewModel>();
             }
             
-            // Handle navigation
             _mainViewModel.PropertyChanged += OnMainViewModelPropertyChanged;
             
-            // Listen for settings changes to refresh gauge configuration
             _settingsViewModel.PropertyChanged += OnSettingsViewModelPropertyChanged;
         };
     }
@@ -45,21 +47,19 @@ public partial class MainWindow : Window
             
             if (_mainViewModel?.IsShowingSettings == true)
             {
-                // Create settings view if it doesn't exist
+                // Lazily create the settings view so the dashboard starts quickly and keeps one settings instance.
                 if (_settingsView == null)
                 {
                     _settingsView = new SettingsView();
                     _settingsView.DataContext = _settingsViewModel;
                 }
                 
-                // Set content and show settings
                 settingsContent!.Content = _settingsView;
                 telemetryView!.IsVisible = false;
                 settingsView!.IsVisible = true;
             }
             else
             {
-                // Show telemetry, hide settings
                 telemetryView!.IsVisible = true;
                 settingsView!.IsVisible = false;
             }
@@ -68,13 +68,13 @@ public partial class MainWindow : Window
 
     private async void OnSettingsViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        // When IsModified changes from true to false, it means settings were saved
         if (e.PropertyName == nameof(SettingsViewModel.IsModified) && 
             _settingsViewModel?.IsModified == false && 
             _mainViewModel != null)
         {
-            // Refresh gauge configuration in MainViewModel
+            // A transition back to "not modified" means settings were saved and the dashboard should reload layout.
             await _mainViewModel.RefreshGaugeConfigurationAsync();
         }
     }
 }
+

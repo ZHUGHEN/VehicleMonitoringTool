@@ -11,38 +11,26 @@ using CarTelemetry.Core.Obd;
 
 namespace CarTelemetry.Desktop.Services;
 
+/// <summary>
+/// Stores deterministic diagnostic analysis results to avoid repeated API calls for the same code set.
+/// </summary>
 public interface IDiagnosticAnalysisCacheService
 {
-    /// <summary>
-    /// Builds a stable cache key for a diagnostic analysis request.
-    /// </summary>
     string CreateKey(string aiModel, string vehicleModel, IReadOnlyCollection<DtcCode> codes);
 
-    /// <summary>
-    /// Returns a cached analysis when one exists for the supplied key.
-    /// </summary>
     Task<string?> GetAsync(string key, CancellationToken ct);
 
-    /// <summary>
-    /// Stores the completed analysis for future requests with the same key.
-    /// </summary>
     Task SetAsync(string key, string analysis, CancellationToken ct);
 
-    /// <summary>
-    /// Removes all persisted diagnostic analysis entries.
-    /// </summary>
     Task ClearAsync(CancellationToken ct);
 }
 
 public sealed class JsonDiagnosticAnalysisCacheService : IDiagnosticAnalysisCacheService
 {
-    // Increment when the on-disk cache shape or key semantics change.
     private const int CacheVersion = 1;
 
-    // Keep prompt changes from reusing analyses generated with older instructions.
     private const string PromptVersion = "diagnostic-prompt-v1";
 
-    // Serializes file access so read/modify/write operations cannot overlap.
     private readonly SemaphoreSlim _gate = new(1, 1);
     private readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
     private readonly string _cacheFilePath;
@@ -58,7 +46,6 @@ public sealed class JsonDiagnosticAnalysisCacheService : IDiagnosticAnalysisCach
 
     public string CreateKey(string aiModel, string vehicleModel, IReadOnlyCollection<DtcCode> codes)
     {
-        // Normalize user and scan input so equivalent requests hit the same cache entry.
         var normalizedCodes = codes
             .Select(code => code.Code.Trim().ToUpperInvariant())
             .Where(code => !string.IsNullOrWhiteSpace(code))
@@ -138,7 +125,6 @@ public sealed class JsonDiagnosticAnalysisCacheService : IDiagnosticAnalysisCach
         await using var stream = File.OpenRead(_cacheFilePath);
         var cache = await JsonSerializer.DeserializeAsync<DiagnosticAnalysisCacheFile>(stream, cancellationToken: ct);
 
-        // Treat missing or incompatible cache files as empty rather than failing the analysis flow.
         return cache?.Version == CacheVersion ? cache : new DiagnosticAnalysisCacheFile();
     }
 
@@ -166,3 +152,4 @@ public sealed class JsonDiagnosticAnalysisCacheService : IDiagnosticAnalysisCach
         public DateTimeOffset CreatedUtc { get; set; }
     }
 }
+

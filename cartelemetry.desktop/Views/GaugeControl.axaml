@@ -4,6 +4,7 @@
              x:Class="CarTelemetry.Desktop.Views.GaugeControl"
              x:DataType="vm:GaugeViewModel">
   
+  <!-- Gauge card: title, numeric value/unit, and proportional bar. -->
   <Border Background="rgba(0, 0, 0, 0.85)"
           BorderBrush="rgba(110, 0, 0, 0.81)"
           BorderThickness="1"
@@ -12,7 +13,7 @@
           Margin="8">
     
     <Grid RowDefinitions="Auto,*" ColumnDefinitions="90,*" VerticalAlignment="Center">
-      <!-- Title -->
+      <!-- Gauge title. -->
       <TextBlock Grid.Row="0" Grid.ColumnSpan="2" 
                  Text="{Binding Title}" 
                  FontSize="20" 
@@ -21,7 +22,7 @@
                  Foreground="#9CA3AF"
                  Margin="0,0,0,4" />
       
-      <!-- Left: Number and Unit -->
+      <!-- Current gauge reading. -->
       <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
         <TextBlock Text="{Binding Value, StringFormat={}{0:F0}}" 
                    FontSize="28"
@@ -35,7 +36,7 @@
                    Margin="0,2,0,0" />
       </StackPanel>
       
-      <!-- Right: Progress Bar -->
+      <!-- Gauge progress bar. -->
       <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
         <ProgressBar Value="{Binding Value}" 
                      Maximum="{Binding Maximum}" 
@@ -45,3 +46,4 @@
     </Grid>
   </Border>
 </UserControl>
+

@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace CarTelemetry.Core.Obd;
 
+/// <summary>
+/// Serial-port implementation for ELM327-compatible OBD-II adapters.
+/// </summary>
 public sealed class Elm327Adapter : IObdAdapter
 {
     private readonly string _portName;
     private readonly int _baud;
     private SerialPort? _port;
 
-    // ELM expects \r and returns '>' prompt
     private const string Prompt = ">";
     private const int DefaultTimeoutMs = 1500;
 
@@ -24,7 +26,6 @@ public sealed class Elm327Adapter : IObdAdapter
 
     public async Task ConnectAsync(CancellationToken ct)
     {
-        // No side effects until ConnectAsync is actually called
         _port = new SerialPort(_portName, _baud)
         {
             NewLine = "\r",
@@ -34,24 +35,22 @@ public sealed class Elm327Adapter : IObdAdapter
 
         _port.Open();
 
-        // Z33-era Nissan ECUs use ISO 9141-2/K-line. Forcing protocol 3 avoids
-        // slow or unreliable auto-protocol negotiation on many ELM327 clones.
-        await SendAsync("ATZ", ct);    // reset
-        await SendAsync("ATE0", ct);   // echo off
-        await SendAsync("ATL0", ct);   // linefeeds off
-        await SendAsync("ATS1", ct);   // spaces on, easier to inspect in tester logs
-        await SendAsync("ATH0", ct);   // headers off
-        await SendAsync("ATAT1", ct);  // adaptive timing on
-        await SendAsync("ATST96", ct); // ~600 ms OBD response timeout inside ELM
-        await SendAsync("ATSP3", ct);  // ISO 9141-2
+        // Configure a quiet ISO 9141-2 session that returns compact, parser-friendly responses.
+        await SendAsync("ATZ", ct);
+        await SendAsync("ATE0", ct);
+        await SendAsync("ATL0", ct);
+        await SendAsync("ATS1", ct);
+        await SendAsync("ATH0", ct);
+        await SendAsync("ATAT1", ct);
+        await SendAsync("ATST96", ct);
+        // The Z33 uses ISO 9141-2; change this if the adapter is used with a different vehicle.
+        await SendAsync("ATSP3", ct);
     }
 
     public Task<string> SendRawAsync(string command, CancellationToken ct)
         => SendAsync(command, ct);
     public async Task<double?> ReadRpmAsync(CancellationToken ct)
     {
-        // Mode 01 PID 0C = Engine RPM
-        // Response data bytes A,B => RPM = ((256*A)+B)/4
         var raw = await SendAsync("010C", ct);
         var bytes = ExtractDataBytes(raw);
         if (bytes is null || bytes.Length < 2) return null;
@@ -62,7 +61,6 @@ public sealed class Elm327Adapter : IObdAdapter
 
     public async Task<double?> ReadSpeedKmhAsync(CancellationToken ct)
     {
-        // Mode 01 PID 0D = Vehicle speed (km/h)
         var raw = await SendAsync("010D", ct);
         var bytes = ExtractDataBytes(raw);
         if (bytes is null || bytes.Length < 1) return null;
@@ -72,7 +70,6 @@ public sealed class Elm327Adapter : IObdAdapter
 
     public async Task<double?> ReadCoolantCAsync(CancellationToken ct)
     {
-        // Mode 01 PID 05 = Coolant temp => A - 40 (°C)
         var raw = await SendAsync("0105", ct);
         var bytes = ExtractDataBytes(raw);
         if (bytes is null || bytes.Length < 1) return null;
@@ -82,23 +79,20 @@ public sealed class Elm327Adapter : IObdAdapter
 
     public ValueTask DisposeAsync()
     {
-        try { _port?.Dispose(); } catch { /* ignore */ }
+        try { _port?.Dispose(); } catch { }
         return ValueTask.CompletedTask;
     }
 
-    // ---- Helpers ----
-    /*private async*/
     private Task<string> SendAsync(string cmd, CancellationToken ct)
     {
         if (_port is null || !_port.IsOpen)
             throw new InvalidOperationException("Serial port is not open. Call ConnectAsync first.");
 
-        // Clear any stale input so we read only the response to this command
-        try { _port.DiscardInBuffer(); } catch { /* ignore */ }
+        try { _port.DiscardInBuffer(); } catch { }
 
+        // ELM commands are carriage-return terminated and complete when the adapter prompt returns.
         _port.Write(cmd + "\r");
 
-        // Read until '>' prompt or timeout
         var sb = new StringBuilder(64);
         var start = Environment.TickCount;
 
@@ -116,27 +110,21 @@ public sealed class Elm327Adapter : IObdAdapter
             }
             catch (TimeoutException)
             {
-                break; // partial is fine; parsers handle nulls
+                // Partial responses are still useful; typed readers return null if parsing fails.
+                break;
             }
 
             if (Environment.TickCount - start > DefaultTimeoutMs + 300)
                 break;
         }
 
-        //return sb.ToString();
         return Task.FromResult(sb.ToString());
     }
 
-    /// <summary>
-    /// Extracts hex data bytes for Mode 01 responses.
-    /// Accepts common ELM formats (with/without spaces/CRLF, with/without "41 xx" echoes).
-    /// Returns null on parse failure.
-    /// </summary>
     private static byte[]? ExtractDataBytes(string raw)
     {
         if (string.IsNullOrWhiteSpace(raw)) return null;
 
-        // Normalize: remove CR/LF and extra spaces
         var cleaned = raw
             .Replace("\r", " ")
             .Replace("\n", " ")
@@ -146,39 +134,31 @@ public sealed class Elm327Adapter : IObdAdapter
 
         if (cleaned.Length == 0) return null;
 
-        // Tokenize by whitespace
         var tokens = cleaned.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-        // Find the first frame that starts with "41" (response to mode 01)
+        // Prefer tokenized ELM responses, then fall back to compact hexadecimal output.
         int idx = Array.FindIndex(tokens, t => t.Equals("41", StringComparison.OrdinalIgnoreCase));
         if (idx >= 0 && idx + 2 <= tokens.Length - 1)
         {
-            // tokens[idx]   = "41"
-            // tokens[idx+1] = PID (e.g., "0C")
-            // data bytes follow from idx+2 onward
             var dataTokens = tokens[(idx + 2)..];
 
-            // If the adapter returns a single concatenated string like "410C0FA0",
-            // fall back to hex-pair slicing.
             if (dataTokens.Length == 0 && tokens[idx + 1].Length > 2)
                 return SliceHexPairs(tokens[idx + 1][2..]);
 
             return ParseHexPairs(dataTokens);
         }
 
-        // Fallback: try to strip all non-hex and parse pairs
         var hexOnly = new StringBuilder(cleaned.Length);
         foreach (char c in cleaned)
         {
             if (Uri.IsHexDigit(c)) hexOnly.Append(c);
         }
 
-        // Expect something like 410C0FA0...
         var hex = hexOnly.ToString();
         int pos = hex.IndexOf("41", StringComparison.OrdinalIgnoreCase);
-        if (pos >= 0 && pos + 4 <= hex.Length) // "41" + PID(2)
+        if (pos >= 0 && pos + 4 <= hex.Length)
         {
-            var rest = hex[(pos + 4)..]; // skip "41" + PID
+            var rest = hex[(pos + 4)..];
             return SliceHexPairs(rest);
         }
 
@@ -213,3 +193,4 @@ public sealed class Elm327Adapter : IObdAdapter
         return buf;
     }
 }
+

@@ -6,7 +6,7 @@ using Avalonia.Media;
 namespace CarTelemetry.Desktop.Converters;
 
 /// <summary>
-/// Converter for transmission status text
+/// Formats transmission state for dashboard status labels.
 /// </summary>
 public class TransmissionStatusConverter : IValueConverter
 {
@@ -27,9 +27,6 @@ public class TransmissionStatusConverter : IValueConverter
     }
 }
 
-/// <summary>
-/// Converter for transmission status color
-/// </summary>
 public class TransmissionColorConverter : IValueConverter
 {
     public static readonly TransmissionColorConverter Instance = new();
@@ -48,3 +45,4 @@ public class TransmissionColorConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+

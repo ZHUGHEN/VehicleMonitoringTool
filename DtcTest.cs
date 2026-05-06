@@ -2,12 +2,10 @@ using System;
 
 namespace CarTelemetry.Core.Obd
 {
-    // Quick test program to verify DTC decoding
     class DtcTest
     {
         static void Main()
         {
-            // Test the problematic cases
             TestDtcDecoding("47 04 20 00 00 00", "P0420 (original)");
             TestDtcDecoding("47 04 20", "P0420 (simplified)"); 
             TestDtcDecoding("4A 04 42 00 00 00", "P0442 (original)");
@@ -22,21 +20,19 @@ namespace CarTelemetry.Core.Obd
             var hex = CleanToHex(raw);
             Console.WriteLine($"Cleaned hex: '{hex}'");
             
-            // Find response header: 43/47/4A (for 03/07/0A)
             var hdrIdx = hex.IndexOf("43", StringComparison.OrdinalIgnoreCase);
             if (hdrIdx < 0) hdrIdx = hex.IndexOf("47", StringComparison.OrdinalIgnoreCase);
             if (hdrIdx < 0) hdrIdx = hex.IndexOf("4A", StringComparison.OrdinalIgnoreCase);
             
             Console.WriteLine($"Header found at index: {hdrIdx}");
             
-            int pos = hdrIdx + 2; // past header byte
+            int pos = hdrIdx + 2;
             Console.WriteLine($"Position after header: {pos}");
             
             var remainingLength = hex.Length - pos;
             Console.WriteLine($"Remaining length: {remainingLength}");
             Console.WriteLine($"Remaining length % 4: {remainingLength % 4}");
             
-            // Some ECUs add a status/length byte next; if remaining length is odd, skip 1 byte (2 hex chars)
             if ((remainingLength % 4) != 0 && remainingLength >= 2)
             {
                 Console.WriteLine("Skipping 2 chars (1 byte)");
@@ -45,7 +41,6 @@ namespace CarTelemetry.Core.Obd
             
             Console.WriteLine($"Final position: {pos}");
             
-            // Each DTC is 2 bytes => 4 hex chars (A,B)
             while (pos + 4 <= hex.Length)
             {
                 var aHex = hex.Substring(pos, 2);
@@ -84,3 +79,4 @@ namespace CarTelemetry.Core.Obd
         }
     }
 }
+

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace CarTelemetry.Relay.Configuration;
 
+/// <summary>
+/// API keys accepted by the relay ingest endpoint.
+/// </summary>
 public class IngestConfiguration
 {
     public Dictionary<string, string> IngestKeys { get; set; } = new();
@@ -12,3 +15,4 @@ public class CorsConfiguration
 {
     public string[] AllowedOrigins { get; set; } = Array.Empty<string>();
 }
+

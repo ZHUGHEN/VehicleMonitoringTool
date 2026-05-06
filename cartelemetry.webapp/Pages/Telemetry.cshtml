@@ -25,7 +25,6 @@
     </div>
 
     <div class="row">
-        <!-- RPM Gauge -->
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-header">
@@ -40,7 +39,6 @@
             </div>
         </div>
 
-        <!-- Speed Gauge -->
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-header">
@@ -55,7 +53,6 @@
             </div>
         </div>
 
-        <!-- Coolant Temperature -->
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-header">
@@ -86,7 +83,6 @@
         </div>
     </div>
 
-    <!-- Future: Racing Line Visualization -->
     <div class="row mt-4">
         <div class="col-md-12">
             <div class="card">
@@ -133,22 +129,18 @@
 </style>
 
 @section Scripts {
-    <!-- SignalR Client -->
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     
     <script>
         "use strict";
 
-        // Vehicle and session identifiers (in production, these could come from URL params)
         const vehicleId = "Z33-01";
-        const sessionId = "dev-local";  // Must match desktop app's sessionId
+        const sessionId = "dev-local";
 
-        // Initialize SignalR connection
         const connection = new signalR.HubConnectionBuilder()
             .withUrl(`/telemetryHub?vehicleId=${vehicleId}&sessionId=${sessionId}`)
             .build();
 
-        // Connection event handlers
         connection.start().then(function () {
             console.log("Connected to telemetry hub");
             updateConnectionStatus("Connected", "bg-success");
@@ -161,14 +153,12 @@
             console.log("Connection closed");
             updateConnectionStatus("Disconnected", "bg-warning");
             
-            // Auto-reconnect after 5 seconds
             setTimeout(function() {
                 updateConnectionStatus("Reconnecting...", "bg-secondary");
                 connection.start();
             }, 5000);
         });
 
-        // Handle incoming telemetry data
         connection.on("stream", function (envelope) {
             console.log("Received telemetry:", envelope);
             
@@ -178,14 +168,12 @@
             }
         });
 
-        // Update telemetry display
         function updateTelemetryDisplay(payload) {
             if (payload.rpm !== null && payload.rpm !== undefined) {
                 document.getElementById('rpmValue').textContent = Math.round(payload.rpm);
             }
             
             if (payload.speedKmh !== null && payload.speedKmh !== undefined) {
-                // Convert km/h to mph
                 const speedMph = payload.speedKmh * 0.621371;
                 document.getElementById('speedValue').textContent = Math.round(speedMph);
             }
@@ -195,7 +183,6 @@
             }
         }
 
-        // Log telemetry data
         function logTelemetryData(envelope) {
             const log = document.getElementById('telemetryLog');
             const timestamp = new Date(envelope.ts).toLocaleTimeString();
@@ -204,16 +191,13 @@
             
             log.appendChild(logEntry);
             
-            // Keep only last 20 entries
             while (log.children.length > 20) {
                 log.removeChild(log.firstChild);
             }
             
-            // Scroll to bottom
             log.scrollTop = log.scrollHeight;
         }
 
-        // Update connection status
         function updateConnectionStatus(status, badgeClass) {
             const statusElement = document.getElementById('connectionStatus');
             statusElement.textContent = status;
@@ -221,3 +205,4 @@
         }
     </script>
 }
+

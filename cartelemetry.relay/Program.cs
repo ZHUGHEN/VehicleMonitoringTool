@@ -4,17 +4,14 @@ using CarTelemetry.Relay.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Force a predictable port
 builder.WebHost.UseUrls("http://localhost:5000");
 
-// Load configuration
 var ingestConfig = new IngestConfiguration();
 builder.Configuration.GetSection("IngestKeys").Bind(ingestConfig.IngestKeys);
 
 var corsConfig = new CorsConfiguration();
 builder.Configuration.GetSection("Cors").Bind(corsConfig);
 
-// CORS: allow configured origins
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("viewer", policy => policy
@@ -28,7 +25,6 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-// Request logging middleware
 app.Use(async (context, next) =>
 {
     var start = DateTime.UtcNow;
@@ -49,9 +45,9 @@ app.UseCors("viewer");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-// Ingest settings
 const string IngestHeader = "X-Ingest-Key";
 
+// Authenticated telemetry ingest endpoint. Valid samples are forwarded to matching SignalR groups.
 app.MapPost("/ingest/{vehicleId}/{sessionId}", async (
     HttpRequest req,
     string vehicleId,
@@ -59,14 +55,12 @@ app.MapPost("/ingest/{vehicleId}/{sessionId}", async (
     StreamEnvelope env,
     IHubContext<TelemetryHub> hub) =>
 {
-    // Validate ingest key
     if (!req.Headers.TryGetValue(IngestHeader, out var providedKey))
     {
         app.Logger.LogWarning("Ingest attempt without key from {RemoteIp}", req.HttpContext.Connection.RemoteIpAddress);
         return Results.Unauthorized();
     }
 
-    // Check if the provided key matches any of our configured keys
     var isValidKey = ingestConfig.IngestKeys.Values.Contains(providedKey.ToString());
     if (!isValidKey)
     {
@@ -74,7 +68,6 @@ app.MapPost("/ingest/{vehicleId}/{sessionId}", async (
         return Results.Unauthorized();
     }
 
-    // Log successful ingest
     var keyType = ingestConfig.IngestKeys.FirstOrDefault(kvp => kvp.Value == providedKey).Key ?? "Unknown";
     app.Logger.LogInformation("Valid ingest from {KeyType} key: {VehicleId}:{SessionId}", keyType, vehicleId, sessionId);
 
@@ -86,7 +79,6 @@ app.MapPost("/ingest/{vehicleId}/{sessionId}", async (
     return Results.Accepted();
 });
 
-// Health check endpoint
 app.MapGet("/health", () => new
 {
     Status = "Healthy",
@@ -95,7 +87,6 @@ app.MapGet("/health", () => new
     AllowedOrigins = corsConfig.AllowedOrigins
 });
 
-// Key validation endpoint (for testing)
 app.MapPost("/validate-key", (HttpRequest req) =>
 {
     if (!req.Headers.TryGetValue(IngestHeader, out var providedKey))
@@ -116,10 +107,8 @@ app.MapHub<TelemetryHub>("/ws");
 app.Run();
 
 
-// ===== Types go in a BLOCK namespace (not file-scoped) =====
 namespace CarTelemetry.Relay
 {
-    // Envelope schema
     public record StreamEnvelope(
         string type,
         string vehicleId,
@@ -128,10 +117,8 @@ namespace CarTelemetry.Relay
         long   ts,
         object payload);
 
-    // Example payload
     public record TelemetryPayload(double? rpm, double? speedKmh, double? coolantC);
 
-    // SignalR hub
     public class TelemetryHub : Hub
     {
         public override Task OnConnectedAsync()
@@ -144,3 +131,4 @@ namespace CarTelemetry.Relay
         }
     }
 }
+

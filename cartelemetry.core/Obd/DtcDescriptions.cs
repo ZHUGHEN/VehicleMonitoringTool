@@ -3,7 +3,7 @@ using System.Collections.Frozen;
 namespace CarTelemetry.Core.Obd;
 
 /// <summary>
-/// Service to provide human-readable descriptions for OBD-II Diagnostic Trouble Codes (DTCs)
+/// Resolves OBD-II code families and common diagnostic descriptions.
 /// </summary>
 public interface IDtcDescriptionService
 {
@@ -21,10 +21,8 @@ public sealed class DtcDescriptionService : IDtcDescriptionService
         ["U"] = "Network/Communication"
     }.ToFrozenDictionary();
 
-    // Comprehensive DTC description database - focusing on most common codes
     private static readonly FrozenDictionary<string, string> DtcDescriptions = new Dictionary<string, string>
     {
-        // P0xxx - Powertrain Generic Codes
         ["P0001"] = "Fuel Volume Regulator Control Circuit/Open",
         ["P0002"] = "Fuel Volume Regulator Control Circuit Range/Performance",
         ["P0003"] = "Fuel Volume Regulator Control Circuit Low",
@@ -36,7 +34,6 @@ public sealed class DtcDescriptionService : IDtcDescriptionService
         ["P0009"] = "Engine Position System Performance Bank 2",
         ["P0010"] = "Intake Camshaft Position Actuator Circuit/Open (Bank 1)",
         
-        // Engine Management - P01xx
         ["P0100"] = "Mass or Volume Air Flow Circuit Malfunction",
         ["P0101"] = "Mass or Volume Air Flow Circuit Range/Performance Problem",
         ["P0102"] = "Mass or Volume Air Flow Circuit Low Input",
@@ -119,7 +116,6 @@ public sealed class DtcDescriptionService : IDtcDescriptionService
         ["P0179"] = "Fuel Composition Sensor Circuit High Input",
         ["P0180"] = "Fuel Temperature Sensor A Circuit Malfunction",
         
-        // Fuel Injection - P02xx  
         ["P0200"] = "Injector Circuit Malfunction",
         ["P0201"] = "Injector Circuit Malfunction - Cylinder 1",
         ["P0202"] = "Injector Circuit Malfunction - Cylinder 2",
@@ -172,7 +168,6 @@ public sealed class DtcDescriptionService : IDtcDescriptionService
         ["P0249"] = "Turbocharger Wastegate Solenoid B Low",
         ["P0250"] = "Turbocharger Wastegate Solenoid B High",
         
-        // Ignition System - P03xx
         ["P0300"] = "Random/Multiple Cylinder Misfire Detected",
         ["P0301"] = "Cylinder 1 Misfire Detected",
         ["P0302"] = "Cylinder 2 Misfire Detected", 
@@ -237,7 +232,6 @@ public sealed class DtcDescriptionService : IDtcDescriptionService
         ["P0361"] = "Ignition Coil K Primary/Secondary Circuit Malfunction",
         ["P0362"] = "Ignition Coil L Primary/Secondary Circuit Malfunction",
         
-        // Emissions Control - P04xx
         ["P0400"] = "Exhaust Gas Recirculation Flow Malfunction",
         ["P0401"] = "Exhaust Gas Recirculation Flow Insufficient Detected",
         ["P0402"] = "Exhaust Gas Recirculation Flow Excessive Detected",
@@ -325,7 +319,6 @@ public sealed class DtcDescriptionService : IDtcDescriptionService
         ["P0484"] = "Cooling Fan Circuit Over Current",
         ["P0485"] = "Cooling Fan Power/Ground Circuit Malfunction",
 
-        // Vehicle Speed Control - P05xx
         ["P0500"] = "Vehicle Speed Sensor Malfunction",
         ["P0501"] = "Vehicle Speed Sensor Range/Performance",
         ["P0502"] = "Vehicle Speed Sensor Circuit Low Input",
@@ -368,7 +361,6 @@ public sealed class DtcDescriptionService : IDtcDescriptionService
         ["P0569"] = "Cruise Control Coast Signal Malfunction",
         ["P0570"] = "Cruise Control Accel Signal Malfunction",
 
-        // Transmission - P07xx
         ["P0700"] = "Transmission Control System Malfunction",
         ["P0701"] = "Transmission Control System Range/Performance",
         ["P0702"] = "Transmission Control System Electrical",
@@ -442,7 +434,6 @@ public sealed class DtcDescriptionService : IDtcDescriptionService
         ["P0773"] = "Shift Solenoid E Electrical",
         ["P0774"] = "Shift Solenoid E Intermittent",
 
-        // Common Chassis Codes (C0xxx)
         ["C0035"] = "Left Front Wheel Speed Circuit Malfunction",
         ["C0040"] = "Right Front Wheel Speed Circuit Malfunction", 
         ["C0045"] = "Left Rear Wheel Speed Circuit Malfunction",
@@ -451,7 +442,6 @@ public sealed class DtcDescriptionService : IDtcDescriptionService
         ["C0121"] = "Valve Relay Circuit Malfunction",
         ["C0140"] = "ABS System Internal Malfunction",
 
-        // Common Body Codes (B0xxx)
         ["B0001"] = "Driver Airbag Circuit Resistance High",
         ["B0002"] = "Driver Airbag Circuit Resistance Low",
         ["B0003"] = "Driver Airbag Circuit Short to Ground",
@@ -461,7 +451,6 @@ public sealed class DtcDescriptionService : IDtcDescriptionService
         ["B0010"] = "Driver Side Impact Sensor Circuit Resistance High",
         ["B0015"] = "Passenger Side Impact Sensor Circuit Resistance High",
         
-        // Common Network/Communication Codes (U0xxx)
         ["U0001"] = "High Speed CAN Communication Bus",
         ["U0002"] = "High Speed CAN Communication Bus Performance",
         ["U0003"] = "High Speed CAN Communication Bus (+) Open",
@@ -563,11 +552,9 @@ public sealed class DtcDescriptionService : IDtcDescriptionService
 
         var code = dtcCode.Trim().ToUpperInvariant();
         
-        // Direct lookup
         if (DtcDescriptions.TryGetValue(code, out var description))
             return description;
 
-        // Generic fallback for unknown codes
         return GetGenericDescription(code);
     }
 
@@ -600,3 +587,4 @@ public sealed class DtcDescriptionService : IDtcDescriptionService
         return $"{systemName} diagnostic trouble code {dtcCode} (description not available)";
     }
 }
+

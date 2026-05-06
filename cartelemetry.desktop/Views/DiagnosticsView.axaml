@@ -3,10 +3,11 @@
              xmlns:vm="clr-namespace:CarTelemetry.Desktop.ViewModels"
              x:Class="CarTelemetry.Desktop.Views.DiagnosticsView"
              x:DataType="vm:DiagnosticsViewModel">
-  
+
+  <!-- Diagnostics workspace: DTC lists, optional AI analysis, and action buttons. -->
   <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="20">
-    
-    <!-- Header -->
+
+    <!-- Header: page title and current diagnostic status. -->
     <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
       <TextBlock Text="OBD-II Diagnostic Trouble Codes" FontSize="24" FontWeight="Bold" />
       <Border Background="#3A3A3A" CornerRadius="5" Padding="8,4">
@@ -14,47 +15,47 @@
       </Border>
     </StackPanel>
 
-    <!-- Main Content -->
+    <!-- DTC columns: stored, pending, and permanent codes. -->
     <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="15">
-      
-      <!-- Stored DTCs -->
+
+      <!-- Stored DTC list. -->
       <Border Grid.Column="0" Background="rgba(59, 59, 59, 1)" CornerRadius="8" Padding="15">
         <Grid RowDefinitions="Auto,*">
           <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
             <TextBlock Text="Stored DTCs" FontSize="16" FontWeight="SemiBold" />
             <Border Background="#DC3545" CornerRadius="10" MinWidth="25" Height="20">
-              <TextBlock Text="{Binding Stored.Count}" 
-                        Foreground="White" 
-                        FontSize="12" 
-                        HorizontalAlignment="Center" 
+              <TextBlock Text="{Binding Stored.Count}"
+                        Foreground="White"
+                        FontSize="12"
+                        HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
             </Border>
           </StackPanel>
-          
-          <ScrollViewer Grid.Row="1" 
+
+          <ScrollViewer Grid.Row="1"
                         AllowAutoHide="True"
                         IsScrollChainingEnabled="True">
             <ItemsControl ItemsSource="{Binding Stored}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                  <Border Background="White" 
-                          CornerRadius="5" 
-                          Padding="10" 
+                  <Border Background="White"
+                          CornerRadius="5"
+                          Padding="10"
                           Margin="0,0,0,5"
-                          BorderBrush="#DDD" 
+                          BorderBrush="#DDD"
                           BorderThickness="1">
                     <StackPanel>
-                      <TextBlock Text="{Binding Code}" 
-                                FontWeight="Bold" 
-                                FontSize="14" 
+                      <TextBlock Text="{Binding Code}"
+                                FontWeight="Bold"
+                                FontSize="14"
                                 Foreground="#DC3545" />
-                      <TextBlock Text="{Binding System}" 
-                                FontSize="12" 
+                      <TextBlock Text="{Binding System}"
+                                FontSize="12"
                                 Foreground="#666" />
-                      <TextBlock Text="{Binding Description}" 
-                                FontSize="11" 
-                                Foreground="#333" 
-                                TextWrapping="Wrap" 
+                      <TextBlock Text="{Binding Description}"
+                                FontSize="11"
+                                Foreground="#333"
+                                TextWrapping="Wrap"
                                 Margin="0,2,0,0" />
                     </StackPanel>
                   </Border>
@@ -65,44 +66,44 @@
         </Grid>
       </Border>
 
-      <!-- Pending DTCs -->
+      <!-- Pending DTC list. -->
       <Border Grid.Column="1" Background="rgba(59, 59, 59, 1)" CornerRadius="8" Padding="15">
         <Grid RowDefinitions="Auto,*">
           <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
             <TextBlock Text="Pending DTCs" FontSize="16" FontWeight="SemiBold" />
             <Border Background="#FFC107" CornerRadius="10" MinWidth="25" Height="20">
-              <TextBlock Text="{Binding Pending.Count}" 
-                        Foreground="Black" 
-                        FontSize="12" 
-                        HorizontalAlignment="Center" 
+              <TextBlock Text="{Binding Pending.Count}"
+                        Foreground="Black"
+                        FontSize="12"
+                        HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
             </Border>
           </StackPanel>
-          
-          <ScrollViewer Grid.Row="1" 
+
+          <ScrollViewer Grid.Row="1"
                         AllowAutoHide="True"
                         IsScrollChainingEnabled="True">
             <ItemsControl ItemsSource="{Binding Pending}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                  <Border Background="White" 
-                          CornerRadius="5" 
-                          Padding="10" 
+                  <Border Background="White"
+                          CornerRadius="5"
+                          Padding="10"
                           Margin="0,0,0,5"
-                          BorderBrush="#FFE082" 
+                          BorderBrush="#FFE082"
                           BorderThickness="1">
                     <StackPanel>
-                      <TextBlock Text="{Binding Code}" 
-                                FontWeight="Bold" 
-                                FontSize="14" 
+                      <TextBlock Text="{Binding Code}"
+                                FontWeight="Bold"
+                                FontSize="14"
                                 Foreground="#F57F17" />
-                      <TextBlock Text="{Binding System}" 
-                                FontSize="12" 
+                      <TextBlock Text="{Binding System}"
+                                FontSize="12"
                                 Foreground="#666" />
-                      <TextBlock Text="{Binding Description}" 
-                                FontSize="11" 
-                                Foreground="#333" 
-                                TextWrapping="Wrap" 
+                      <TextBlock Text="{Binding Description}"
+                                FontSize="11"
+                                Foreground="#333"
+                                TextWrapping="Wrap"
                                 Margin="0,2,0,0" />
                     </StackPanel>
                   </Border>
@@ -113,44 +114,44 @@
         </Grid>
       </Border>
 
-      <!-- Permanent DTCs -->
+      <!-- Permanent DTC list. -->
       <Border Grid.Column="2" Background="rgba(59, 59, 59, 1)" CornerRadius="8" Padding="15">
         <Grid RowDefinitions="Auto,*">
           <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
             <TextBlock Text="Permanent DTCs" FontSize="16" FontWeight="SemiBold" />
             <Border Background="#28A745" CornerRadius="10" MinWidth="25" Height="20">
-              <TextBlock Text="{Binding Permanent.Count}" 
-                        Foreground="White" 
-                        FontSize="12" 
-                        HorizontalAlignment="Center" 
+              <TextBlock Text="{Binding Permanent.Count}"
+                        Foreground="White"
+                        FontSize="12"
+                        HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
             </Border>
           </StackPanel>
-          
-          <ScrollViewer Grid.Row="1" 
+
+          <ScrollViewer Grid.Row="1"
                         AllowAutoHide="True"
                         IsScrollChainingEnabled="True">
             <ItemsControl ItemsSource="{Binding Permanent}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                  <Border Background="White" 
-                          CornerRadius="5" 
-                          Padding="10" 
+                  <Border Background="White"
+                          CornerRadius="5"
+                          Padding="10"
                           Margin="0,0,0,5"
-                          BorderBrush="#A5D6A7" 
+                          BorderBrush="#A5D6A7"
                           BorderThickness="1">
                     <StackPanel>
-                      <TextBlock Text="{Binding Code}" 
-                                FontWeight="Bold" 
-                                FontSize="14" 
+                      <TextBlock Text="{Binding Code}"
+                                FontWeight="Bold"
+                                FontSize="14"
                                 Foreground="#2E7D32" />
-                      <TextBlock Text="{Binding System}" 
-                                FontSize="12" 
+                      <TextBlock Text="{Binding System}"
+                                FontSize="12"
                                 Foreground="#666" />
-                      <TextBlock Text="{Binding Description}" 
-                                FontSize="11" 
-                                Foreground="#333" 
-                                TextWrapping="Wrap" 
+                      <TextBlock Text="{Binding Description}"
+                                FontSize="11"
+                                Foreground="#333"
+                                TextWrapping="Wrap"
                                 Margin="0,2,0,0" />
                     </StackPanel>
                   </Border>
@@ -163,7 +164,7 @@
 
     </Grid>
 
-    <!-- ChatGPT Analysis -->
+    <!-- AI analysis output panel. -->
     <Border Grid.Row="2"
             IsVisible="{Binding HasAnalysisResult}"
             Background="#242424"
@@ -193,14 +194,15 @@
       </Grid>
     </Border>
 
-    <!-- Action Buttons -->
-    <StackPanel Grid.Row="3" 
-                Orientation="Horizontal" 
-                HorizontalAlignment="Center" 
-                Spacing="15" 
+    <!-- Diagnostic action buttons. -->
+    <StackPanel Grid.Row="3"
+                Orientation="Horizontal"
+                HorizontalAlignment="Center"
+                Spacing="15"
                 Margin="0,20,0,0">
-      
-      <Button Content="🔍 Read All DTCs" 
+
+      <!-- Read all DTCs button. -->
+      <Button Content="🔍 Read All DTCs"
               Command="{Binding ReadAllCommand}"
               IsEnabled="{Binding !IsBusy}"
               Background="#007ACC"
@@ -209,8 +211,9 @@
               CornerRadius="5"
               FontSize="14"
               FontWeight="SemiBold" />
-      
-      <Button Content="🗑️ Clear DTCs" 
+
+      <!-- Clear DTCs button. -->
+      <Button Content="🗑️ Clear DTCs"
               Command="{Binding ClearCommand}"
               IsEnabled="{Binding !IsBusy}"
               Background="#DC3545"
@@ -220,7 +223,8 @@
               FontSize="14"
               FontWeight="SemiBold" />
 
-      <Button Content="Analyze with ChatGPT" 
+      <!-- Analyze with ChatGPT button. -->
+      <Button Content="Analyze with ChatGPT"
               Command="{Binding AnalyzeWithChatGptCommand}"
               IsEnabled="{Binding !IsBusy}"
               Background="#198754"
@@ -229,21 +233,21 @@
               CornerRadius="5"
               FontSize="14"
               FontWeight="SemiBold" />
-      
-      <!-- Loading Indicator -->
-      <StackPanel Orientation="Horizontal" 
-                  Spacing="5" 
+
+      <!-- Busy indicator shown while DTC operations are running. -->
+      <StackPanel Orientation="Horizontal"
+                  Spacing="5"
                   IsVisible="{Binding IsBusy}">
-        <ProgressBar IsIndeterminate="True" 
-                     Width="100" 
-                     Height="4" 
+        <ProgressBar IsIndeterminate="True"
+                     Width="100"
+                     Height="4"
                      VerticalAlignment="Center" />
-        <TextBlock Text="Working..." 
-                   FontSize="12" 
-                   Foreground="#666" 
+        <TextBlock Text="Working..."
+                   FontSize="12"
+                   Foreground="#666"
                    VerticalAlignment="Center" />
       </StackPanel>
-      
+
     </StackPanel>
 
   </Grid>

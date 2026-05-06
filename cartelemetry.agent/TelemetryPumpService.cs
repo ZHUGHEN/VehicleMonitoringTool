@@ -4,6 +4,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace CarTelemetry.Agent;
 
+/// <summary>
+/// Background worker that forwards OBD telemetry samples to the configured publisher.
+/// </summary>
 public sealed class TelemetryPumpService : BackgroundService
 {
     private readonly IObdPoller _poller;
@@ -20,7 +23,8 @@ public sealed class TelemetryPumpService : BackgroundService
         await foreach (var t in _poller.StreamAsync(stoppingToken))
         {
             await _publisher.PublishAsync(t, stoppingToken);
-            await Task.Delay(100, stoppingToken); // ~10 Hz
+            await Task.Delay(100, stoppingToken);
         }
     }
 }
+
