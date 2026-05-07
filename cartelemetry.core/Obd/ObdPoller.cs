@@ -27,7 +27,7 @@ public sealed class ObdPoller : IObdPoller
     public async IAsyncEnumerable<Telemetry> StreamAsync(
         [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct)
     {
-        // Connect lazily so the adapter is not opened until a consumer starts reading telemetry.
+        // Connect lazily so the adapter is not opened until reading telemetry.
         await _obd.ConnectAsync(ct);
 
         double? rpm = null;
@@ -38,6 +38,7 @@ public sealed class ObdPoller : IObdPoller
         while (!ct.IsCancellationRequested)
         {
             // RPM and speed change quickly; coolant is sampled less often because it moves slowly.
+            // Special Note: This is only set due to my 350z using ISO  9142-2 which has a max transfer rate of 10.4kbs, on CAN BUS cars (2008 z and later) this can be spead up
             switch (requestIndex % 8)
             {
                 case 1:

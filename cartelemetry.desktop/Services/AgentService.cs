@@ -143,7 +143,7 @@ public sealed class AgentService : IAgentService, IDisposable
 
     public void Dispose()
     {
-        // Dispose may run during app shutdown, so give the background loop a short chance to exit cleanly.
+        // Dispose may run during app shutdown, gives the background loop a short chance to exit cleanly.
         _transmissionCts?.Cancel();
         _transmissionTask?.Wait(TimeSpan.FromSeconds(5));
         _transmissionCts?.Dispose();
