@@ -15,6 +15,24 @@ The solution is structured as a multi-project .NET application so the hardware c
 - Diagnostic trouble code reading, clearing, local descriptions, and optional AI-assisted analysis
 - Lap timer with smooth millisecond display updates
 
+## Screenshots
+
+### Telemetry Dashboard
+
+![Telemetry dashboard](docs/screenshots/TelemetryDashboard.jpg)
+
+### Lap Timer
+
+![Lap timer](docs/screenshots/LapTimer.jpg)
+
+### OBD Diagnostics
+
+![OBD diagnostics](docs/screenshots/OBD_Diagnostics.jpg)
+
+### AI-Assisted Diagnostics
+
+![AI-assisted diagnostics](docs/screenshots/ChatGPT_Assisted_Diagnostics.jpg)
+
 ## Tech Stack
 
 - **Language:** C#
