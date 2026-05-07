@@ -431,4 +431,4 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.dotnet-home/.nuget/packages/avalonia/11.3.6/tools/netstandard2.0/Avalonia.Build.Tasks.dll
+.dotnet-home/
