@@ -142,6 +142,7 @@ Disclaimer:
 This information is automatically generated based on available vehicle data and is for informational purposes only. It is not a substitute for a professional mechanic inspection. The system may be incomplete or inaccurate. Always verify critical issues with a qualified technician before making repair or driving decisions.
 
 Rules:
+- ALWAYS include the above disclaimer at the end of your response.
 - Respond ONLY in this format
 - Do NOT add extra sections
 - Do NOT include markdown formatting
