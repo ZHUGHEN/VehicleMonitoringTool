@@ -30,6 +30,11 @@ public partial class MainWindow : Window
             {
                 diagnosticsView.DataContext = App.Services.GetRequiredService<DiagnosticsViewModel>();
             }
+
+            if (this.FindControl<ServiceRecordsView>("ServiceRecordsView") is ServiceRecordsView serviceRecordsView)
+            {
+                serviceRecordsView.DataContext = App.Services.GetRequiredService<ServiceRecordsViewModel>();
+            }
             
             _mainViewModel.PropertyChanged += OnMainViewModelPropertyChanged;
             

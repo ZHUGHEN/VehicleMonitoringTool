@@ -1,0 +1,379 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CarTelemetry.Desktop.ViewModels"
+             x:Class="CarTelemetry.Desktop.Views.ServiceRecordsView"
+             x:Name="Root"
+             x:DataType="vm:ServiceRecordsViewModel">
+
+  <Grid Margin="20">
+    <Grid RowDefinitions="Auto,*">
+
+      <!-- Header and add action. -->
+      <Border Grid.Row="0"
+              Background="rgba(0, 0, 0, 0.85)"
+              BorderBrush="rgba(110, 0, 0, 0.81)"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="20"
+              Margin="0,0,0,20">
+        <Grid ColumnDefinitions="*,Auto">
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Text="Service Records"
+                       FontSize="20"
+                       FontWeight="SemiBold"
+                       Foreground="White"
+                       VerticalAlignment="Center" />
+            <TextBlock Text="{Binding Status}"
+                       FontSize="13"
+                       Foreground="#9CA3AF"
+                       VerticalAlignment="Center"
+                       Margin="16,0,0,0" />
+          </StackPanel>
+
+          <Button Grid.Column="1"
+                  Command="{Binding OpenEntryCommand}"
+                  Background="#DC2626"
+                  Foreground="White"
+                  BorderThickness="0"
+                  CornerRadius="6"
+                  Padding="18,12"
+                  MinHeight="48"
+                  FontSize="14"
+                  FontWeight="SemiBold"
+                  Content="Add Maintenance Record" />
+        </Grid>
+      </Border>
+
+      <!-- Scrollable history. -->
+      <Border Grid.Row="1"
+              Background="rgba(0, 0, 0, 0.85)"
+              BorderBrush="rgba(110, 0, 0, 0.81)"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="18">
+        <Grid RowDefinitions="Auto,*">
+          <Grid Grid.Row="0"
+                ColumnDefinitions="2*,*,*,Auto"
+                Margin="0,0,0,10">
+            <TextBlock Grid.Column="0" Text="Type" Foreground="#9CA3AF" FontSize="12" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="1" Text="Mileage" Foreground="#9CA3AF" FontSize="12" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="2" Text="Date" Foreground="#9CA3AF" FontSize="12" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="3" Text="Actions" Foreground="#9CA3AF" FontSize="12" FontWeight="SemiBold" />
+          </Grid>
+
+          <Grid Grid.Row="1">
+            <TextBlock Text="No service records have been entered."
+                       Foreground="#9CA3AF"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       IsVisible="{Binding !HasRecords}" />
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          IsVisible="{Binding HasRecords}">
+              <ItemsControl ItemsSource="{Binding Records}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border Background="rgba(31, 41, 55, 0.94)"
+                            BorderBrush="#374151"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="14"
+                            Margin="0,0,0,8">
+                      <Grid ColumnDefinitions="2*,*,*,Auto" ColumnSpacing="10">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding Type}"
+                                   Foreground="White"
+                                   FontSize="15"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding DisplayMileage}"
+                                   Foreground="#D1D5DB"
+                                   FontSize="15"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding DisplayDate}"
+                                   Foreground="#D1D5DB"
+                                   FontSize="15"
+                                   VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="3"
+                                    Orientation="Horizontal"
+                                    Spacing="8"
+                                    VerticalAlignment="Center">
+                          <Button Content="Edit"
+                                  Command="{Binding #Root.DataContext.EditRecordCommand}"
+                                  CommandParameter="{Binding}"
+                                  Background="#2563EB"
+                                  Foreground="White"
+                                  BorderThickness="0"
+                                  CornerRadius="5"
+                                  Padding="12,8"
+                                  MinWidth="58" />
+                          <Button Content="Delete"
+                                  Command="{Binding #Root.DataContext.DeleteRecordCommand}"
+                                  CommandParameter="{Binding}"
+                                  Background="#991B1B"
+                                  Foreground="White"
+                                  BorderThickness="0"
+                                  CornerRadius="5"
+                                  Padding="12,8"
+                                  MinWidth="70" />
+                        </StackPanel>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </Grid>
+        </Grid>
+      </Border>
+    </Grid>
+
+    <!-- Entry modal. -->
+    <Border IsVisible="{Binding IsEntryOpen}"
+            Background="rgba(0, 0, 0, 0.72)"
+            ZIndex="10">
+      <Border Background="#111827"
+              BorderBrush="#DC2626"
+              BorderThickness="2"
+              CornerRadius="8"
+              Padding="24"
+              Width="560"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center">
+        <StackPanel Spacing="18">
+          <TextBlock Text="{Binding EntryTitle}"
+                     Foreground="White"
+                     FontSize="22"
+                     FontWeight="SemiBold" />
+
+          <StackPanel Spacing="8">
+            <TextBlock Text="Type" Foreground="#D1D5DB" FontSize="13" FontWeight="SemiBold" />
+            <ComboBox ItemsSource="{Binding ServiceTypes}"
+                      SelectedItem="{Binding SelectedServiceType}"
+                      MinHeight="48"
+                      FontSize="16">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </StackPanel>
+
+          <StackPanel Spacing="8">
+            <TextBlock Text="Mileage" Foreground="#D1D5DB" FontSize="13" FontWeight="SemiBold" />
+            <Button Command="{Binding OpenMileageKeypadCommand}"
+                    Background="#1F2937"
+                    BorderBrush="#4B5563"
+                    BorderThickness="1"
+                    Foreground="White"
+                    HorizontalAlignment="Stretch"
+                    MinHeight="54"
+                    Padding="14"
+                    CornerRadius="6">
+              <TextBlock Text="{Binding MileageDisplayText}"
+                         FontSize="20"
+                         FontFamily="Consolas"
+                         HorizontalAlignment="Center" />
+            </Button>
+            <TextBlock Text="Mileage must be 4 to 6 digits."
+                       Foreground="#9CA3AF"
+                       FontSize="12" />
+          </StackPanel>
+
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+            <StackPanel Grid.Column="0" Spacing="8">
+              <TextBlock Text="Month" Foreground="#D1D5DB" FontSize="13" FontWeight="SemiBold" />
+              <ComboBox ItemsSource="{Binding Months}"
+                        SelectedItem="{Binding SelectedMonth}"
+                        MinHeight="48"
+                        FontSize="16">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding Name}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Spacing="8">
+              <TextBlock Text="Year" Foreground="#D1D5DB" FontSize="13" FontWeight="SemiBold" />
+              <ComboBox ItemsSource="{Binding Years}"
+                        SelectedItem="{Binding SelectedYear}"
+                        MinHeight="48"
+                        FontSize="16" />
+            </StackPanel>
+          </Grid>
+
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+            <Button Grid.Column="0"
+                    Command="{Binding CancelEntryCommand}"
+                    Content="Cancel"
+                    Background="#374151"
+                    Foreground="White"
+                    BorderThickness="0"
+                    CornerRadius="6"
+                    MinHeight="50"
+                    FontSize="15" />
+            <Button Grid.Column="1"
+                    Command="{Binding ReviewEntryCommand}"
+                    Content="{Binding ReviewButtonText}"
+                    Background="#10B981"
+                    Foreground="White"
+                    BorderThickness="0"
+                    CornerRadius="6"
+                    MinHeight="50"
+                    FontSize="15"
+                    FontWeight="SemiBold"
+                    IsEnabled="{Binding CanReviewEntry}" />
+          </Grid>
+        </StackPanel>
+      </Border>
+    </Border>
+
+    <!-- Mileage keypad. -->
+    <Border IsVisible="{Binding IsMileageKeypadOpen}"
+            Background="rgba(0, 0, 0, 0.62)"
+            ZIndex="20">
+      <Border Background="#0B1220"
+              BorderBrush="#4B5563"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="20"
+              Width="360"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center">
+        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="14">
+          <TextBlock Grid.Row="0"
+                     Text="{Binding KeypadMileageDisplay}"
+                     FontFamily="Consolas"
+                     FontSize="32"
+                     Foreground="White"
+                     HorizontalAlignment="Center"
+                     MinHeight="44" />
+
+          <UniformGrid Grid.Row="1" Rows="4" Columns="3">
+            <Button Content="1" Command="{Binding AddMileageDigitCommand}" CommandParameter="1" MinHeight="64" FontSize="24" Margin="4" />
+            <Button Content="2" Command="{Binding AddMileageDigitCommand}" CommandParameter="2" MinHeight="64" FontSize="24" Margin="4" />
+            <Button Content="3" Command="{Binding AddMileageDigitCommand}" CommandParameter="3" MinHeight="64" FontSize="24" Margin="4" />
+            <Button Content="4" Command="{Binding AddMileageDigitCommand}" CommandParameter="4" MinHeight="64" FontSize="24" Margin="4" />
+            <Button Content="5" Command="{Binding AddMileageDigitCommand}" CommandParameter="5" MinHeight="64" FontSize="24" Margin="4" />
+            <Button Content="6" Command="{Binding AddMileageDigitCommand}" CommandParameter="6" MinHeight="64" FontSize="24" Margin="4" />
+            <Button Content="7" Command="{Binding AddMileageDigitCommand}" CommandParameter="7" MinHeight="64" FontSize="24" Margin="4" />
+            <Button Content="8" Command="{Binding AddMileageDigitCommand}" CommandParameter="8" MinHeight="64" FontSize="24" Margin="4" />
+            <Button Content="9" Command="{Binding AddMileageDigitCommand}" CommandParameter="9" MinHeight="64" FontSize="24" Margin="4" />
+            <Button Content="Clear" Command="{Binding ClearMileageCommand}" MinHeight="64" FontSize="16" Margin="4" />
+            <Button Content="0" Command="{Binding AddMileageDigitCommand}" CommandParameter="0" MinHeight="64" FontSize="24" Margin="4" />
+            <Button Content="Back" Command="{Binding BackspaceMileageCommand}" MinHeight="64" FontSize="16" Margin="4" />
+          </UniformGrid>
+
+          <Button Grid.Row="2"
+                  Content="Done"
+                  Command="{Binding CloseMileageKeypadCommand}"
+                  Background="#DC2626"
+                  Foreground="White"
+                  BorderThickness="0"
+                  CornerRadius="6"
+                  MinHeight="52"
+                  FontSize="16"
+                  FontWeight="SemiBold" />
+        </Grid>
+      </Border>
+    </Border>
+
+    <!-- Confirmation modal. -->
+    <Border IsVisible="{Binding IsConfirmingEntry}"
+            Background="rgba(0, 0, 0, 0.72)"
+            ZIndex="30">
+      <Border Background="#111827"
+              BorderBrush="#10B981"
+              BorderThickness="2"
+              CornerRadius="8"
+              Padding="24"
+              Width="500"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center">
+        <StackPanel Spacing="18">
+          <TextBlock Text="Confirm Service Entry"
+                     Foreground="White"
+                     FontSize="22"
+                     FontWeight="SemiBold" />
+          <TextBlock Text="{Binding PendingSummary}"
+                     Foreground="#D1D5DB"
+                     FontSize="18"
+                     TextWrapping="Wrap" />
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+            <Button Grid.Column="0"
+                    Content="Edit"
+                    Command="{Binding CancelConfirmationCommand}"
+                    Background="#374151"
+                    Foreground="White"
+                    BorderThickness="0"
+                    CornerRadius="6"
+                    MinHeight="50"
+                    FontSize="15" />
+            <Button Grid.Column="1"
+                    Content="Confirm"
+                    Command="{Binding ConfirmEntryCommand}"
+                    Background="#10B981"
+                    Foreground="White"
+                    BorderThickness="0"
+                    CornerRadius="6"
+                    MinHeight="50"
+                    FontSize="15"
+                    FontWeight="SemiBold" />
+          </Grid>
+        </StackPanel>
+      </Border>
+    </Border>
+
+    <!-- Delete confirmation modal. -->
+    <Border IsVisible="{Binding IsConfirmingDelete}"
+            Background="rgba(0, 0, 0, 0.72)"
+            ZIndex="40">
+      <Border Background="#111827"
+              BorderBrush="#991B1B"
+              BorderThickness="2"
+              CornerRadius="8"
+              Padding="24"
+              Width="500"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center">
+        <StackPanel Spacing="18">
+          <TextBlock Text="Delete Service Record"
+                     Foreground="White"
+                     FontSize="22"
+                     FontWeight="SemiBold" />
+          <TextBlock Text="{Binding DeleteSummary}"
+                     Foreground="#D1D5DB"
+                     FontSize="18"
+                     TextWrapping="Wrap" />
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+            <Button Grid.Column="0"
+                    Content="Cancel"
+                    Command="{Binding CancelDeleteCommand}"
+                    Background="#374151"
+                    Foreground="White"
+                    BorderThickness="0"
+                    CornerRadius="6"
+                    MinHeight="50"
+                    FontSize="15" />
+            <Button Grid.Column="1"
+                    Content="Delete"
+                    Command="{Binding ConfirmDeleteCommand}"
+                    Background="#991B1B"
+                    Foreground="White"
+                    BorderThickness="0"
+                    CornerRadius="6"
+                    MinHeight="50"
+                    FontSize="15"
+                    FontWeight="SemiBold" />
+          </Grid>
+        </StackPanel>
+      </Border>
+    </Border>
+  </Grid>
+</UserControl>

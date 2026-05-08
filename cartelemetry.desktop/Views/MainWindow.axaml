@@ -167,6 +167,11 @@
             <views:DiagnosticsView x:Name="DiagnosticsView" />
           </TabItem>
 
+          <!-- Service records tab. -->
+          <TabItem Header="Service Records">
+            <views:ServiceRecordsView x:Name="ServiceRecordsView" />
+          </TabItem>
+
         </TabControl>
       </Grid>
     </Grid>

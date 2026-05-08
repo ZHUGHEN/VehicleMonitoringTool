@@ -75,9 +75,11 @@ class Program
             .AddSingleton(openAiConfig)
             .AddSingleton<IDiagnosticAnalysisCacheService, JsonDiagnosticAnalysisCacheService>()
             .AddSingleton<IDiagnosticAiService, OpenAiDiagnosticService>()
+            .AddSingleton<IServiceRecordStore, JsonServiceRecordStore>()
             
             .AddSingleton<MainViewModel>()
             .AddSingleton<DiagnosticsViewModel>()
+            .AddSingleton<ServiceRecordsViewModel>()
             .AddSingleton<SettingsViewModel>()
             .BuildServiceProvider();
 
