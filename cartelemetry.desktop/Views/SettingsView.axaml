@@ -209,6 +209,55 @@
         </StackPanel>
       </Border>
 
+      <!-- Vehicle setup: persisted year, make, and model selection. -->
+      <Border Background="rgba(55, 55, 55, 1)"
+              BorderBrush="#10B981"
+              BorderThickness="2"
+              CornerRadius="12"
+              Padding="24">
+        <StackPanel Spacing="20">
+          <TextBlock Text="Vehicle Setup"
+                     FontSize="20"
+                     FontWeight="SemiBold" />
+
+          <Grid ColumnDefinitions="*,*,*" ColumnSpacing="16">
+            <StackPanel Grid.Column="0" Spacing="8">
+              <TextBlock Text="Year:" FontSize="14" FontWeight="SemiBold" />
+              <ComboBox ItemsSource="{Binding VehicleYears}"
+                        SelectedItem="{Binding SelectedVehicleYear}"
+                        MinHeight="45"
+                        FontSize="16"
+                        Padding="12" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Spacing="8">
+              <TextBlock Text="Make:" FontSize="14" FontWeight="SemiBold" />
+              <ComboBox ItemsSource="{Binding VehicleMakes}"
+                        SelectedItem="{Binding SelectedVehicleMake}"
+                        MinHeight="45"
+                        FontSize="16"
+                        Padding="12"
+                        IsEnabled="{Binding !IsLoadingVehicleMakes}" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Spacing="8">
+              <TextBlock Text="Model:" FontSize="14" FontWeight="SemiBold" />
+              <ComboBox ItemsSource="{Binding VehicleModels}"
+                        SelectedItem="{Binding SelectedVehicleModel}"
+                        MinHeight="45"
+                        FontSize="16"
+                        Padding="12"
+                        IsEnabled="{Binding !IsLoadingVehicleModels}" />
+            </StackPanel>
+          </Grid>
+
+          <TextBlock Text="{Binding VehicleSetupStatus}"
+                     FontSize="14"
+                     Foreground="Gray"
+                     TextWrapping="Wrap" />
+        </StackPanel>
+      </Border>
+
       <!-- Quick actions: reset layout, clear cached AI results, and save settings. -->
       <Border Background="rgba(55, 55, 55, 1)"
               BorderBrush="#EF4444"

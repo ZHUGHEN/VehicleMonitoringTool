@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using System.Net.Http;
 using CarTelemetry.Core;               
 using CarTelemetry.Core.Obd;
 using CarTelemetry.Desktop.ViewModels;
@@ -76,6 +77,9 @@ class Program
             .AddSingleton<IDiagnosticAnalysisCacheService, JsonDiagnosticAnalysisCacheService>()
             .AddSingleton<IDiagnosticAiService, OpenAiDiagnosticService>()
             .AddSingleton<IServiceRecordStore, JsonServiceRecordStore>()
+            .AddSingleton(new HttpClient())
+            .AddSingleton<IVehicleSetupStore, JsonVehicleSetupStore>()
+            .AddSingleton<IVehicleCatalogService, NhtsaVehicleCatalogService>()
             
             .AddSingleton<MainViewModel>()
             .AddSingleton<DiagnosticsViewModel>()
